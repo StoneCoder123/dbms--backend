@@ -11,11 +11,12 @@ public class Patient {
     private String gender;
     private String history;
     private Date dob;
+    private String password;
 
     // Constructors
     public Patient() {}
 
-    public Patient(int patientID, String firstName, String lastName, String address, String NTK, String email, String gender, String history, Date dob) {
+    public Patient(int patientID, String firstName, String lastName, String address, String NTK, String email, String gender, String history, Date dob, String password) {
         this.patientID = patientID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -25,6 +26,7 @@ public class Patient {
         this.gender = gender;
         this.history = history;
         this.dob = dob;
+        this.password = password;
     }
 
     // Getters and Setters
@@ -55,4 +57,12 @@ public class Patient {
 
     public Date getDob() { return dob; }
     public void setDob(Date dob) { this.dob = dob; }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

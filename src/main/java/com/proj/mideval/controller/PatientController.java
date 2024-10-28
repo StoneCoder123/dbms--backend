@@ -2,6 +2,7 @@ package com.proj.mideval.controller;
 
 import com.proj.mideval.model.Patient;
 import com.proj.mideval.service.PatientService;
+//import com.proj.mideval.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,12 @@ public class PatientController {
         return patient.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/by-email")
+    public ResponseEntity<Patient> getPatientByEmail(@RequestParam String email) {
+        Optional<Patient> patient = patientService.getPatientByEmail(email);
+        return patient.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         int result = patientService.createPatient(patient);
@@ -35,6 +42,7 @@ public class PatientController {
         }
         return ResponseEntity.badRequest().build();
     }
+
 
     @PutMapping("/{patientID}")
     public ResponseEntity<Patient> updatePatient(@PathVariable int patientID, @RequestBody Patient patient) {

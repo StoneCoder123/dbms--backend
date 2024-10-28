@@ -54,10 +54,10 @@ public class SurgeryController {
 
 
     // Endpoint to get all surgeries for a specific doctor
-    @GetMapping("/doctor/{doctorID}")
-    public List<Surgery> getSurgeriesByDoctorId(@PathVariable int doctorID) {
-        return surgeryService.getSurgeriesByDoctorId(doctorID);
-    }
+//    @GetMapping("/doctor/{doctorID}")
+//    public List<Surgery> getSurgeriesByDoctorId(@PathVariable int doctorID) {
+//        return surgeryService.getSurgeriesByDoctorId(doctorID);
+//    }
 
     // Create a new Surgery record
     @PostMapping("/{doctorId}")
