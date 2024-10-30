@@ -4,14 +4,16 @@ public class Admin {
     private int adminID;
     private int doctorID;
     private String accessLevel;
+    private String password;
 
     // Constructors
     public Admin() {}
 
-    public Admin(int adminID, int doctorID, String accessLevel) {
+    public Admin(int adminID, int doctorID, String accessLevel,String password) {
         this.adminID = adminID;
         this.doctorID = doctorID;
         this.accessLevel = accessLevel;
+        this.password = password;
     }
 
     // Getters and Setters
@@ -23,4 +25,12 @@ public class Admin {
 
     public String getAccessLevel() { return accessLevel; }
     public void setAccessLevel(String accessLevel) { this.accessLevel = accessLevel; }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -17,6 +17,12 @@ public class JwtInterceptor implements HandlerInterceptor {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             if (JwtUtil.isTokenValid(token)) {
+                String userType = JwtUtil.extractUserType(token);
+                String email = JwtUtil.extractEmail(token);
+
+                // Set attributes to identify user type and email in controllers
+                request.setAttribute("userType", userType);
+                request.setAttribute("email", email);
                 return true;
             }
         }
