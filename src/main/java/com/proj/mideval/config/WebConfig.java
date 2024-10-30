@@ -16,8 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
 //        registry.addInterceptor(jwtInterceptor)
-//                .addPathPatterns("/patients/**") // Apply JWT to all /patients endpoints
-//                .excludePathPatterns("/auth/**", "/patients"); // Exclude login and registration endpoints
+//                .addPathPatterns("/doctor/**", "/patients/**") // Apply JWT to doctor and patient endpoints
+//                .excludePathPatterns("/auth/**"); // Exclude login and registration endpoints
 //    }
 
     @Override

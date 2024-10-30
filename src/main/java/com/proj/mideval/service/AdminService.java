@@ -4,6 +4,7 @@ import com.proj.mideval.model.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
@@ -17,6 +18,8 @@ public class AdminService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     private final RowMapper<Admin> adminRowMapper = new RowMapper<Admin>() {
         @Override
         public Admin mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -24,6 +27,7 @@ public class AdminService {
             admin.setAdminID(rs.getInt("AdminID"));
             admin.setDoctorID(rs.getInt("DoctorID"));
             admin.setAccessLevel(rs.getString("AccessLevel"));
+            admin.setPassword(rs.getString("Password"));
             return admin;
         }
     };
@@ -39,7 +43,7 @@ public class AdminService {
     }
 
     public Admin createAdmin(Admin admin) {
-        String sql = "INSERT INTO Admin (AdminID, DoctorID, AccessLevel) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Admin (AdminID, DoctorID, AccessLevel, Password) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, admin.getAdminID(), admin.getDoctorID(), admin.getAccessLevel());
         return admin;
     }

@@ -4,6 +4,7 @@ import com.proj.mideval.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
@@ -17,7 +18,18 @@ public class PatientService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public PatientService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public Integer getPatientIdByEmail(String email) {
+        String sql = "SELECT PatientID FROM Patient WHERE email = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, email);
+    }
 
     public List<Patient> getAllPatients() {
         String sql = "SELECT * FROM Patient";
