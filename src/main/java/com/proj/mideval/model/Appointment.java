@@ -7,17 +7,19 @@ public class Appointment {
     private int patientID;
     private int doctorID;
     private Date time;
-    private int status; // 0 = requested, 1 = granted
+    private int status;
+    private int cost;// 0 = requested, 1 = granted
 
     // Constructors
     public Appointment() {}
 
-    public Appointment(int appointmentID, int patientID, int doctorID, Date time, int status) {
+    public Appointment(int appointmentID, int patientID, int doctorID, Date time, int status, int cost) {
         this.appointmentID = appointmentID;
         this.patientID = patientID;
         this.doctorID = doctorID;
         this.time = time;
         this.status = status;
+        this.cost = cost;
     }
 
     // Getters and Setters
@@ -35,4 +37,13 @@ public class Appointment {
 
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
 }
+

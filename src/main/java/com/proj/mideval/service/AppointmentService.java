@@ -77,6 +77,7 @@ public class AppointmentService {
         appointment.setDoctorID(rs.getInt("doctorID"));
         appointment.setTime(rs.getTimestamp("time"));
         appointment.setStatus(rs.getInt("status"));
+        appointment.setCost(rs.getInt("cost"));
         return appointment;
     }
 }

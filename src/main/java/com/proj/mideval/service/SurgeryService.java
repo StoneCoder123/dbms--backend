@@ -28,6 +28,18 @@ public class SurgeryService {
         return jdbcTemplate.query(sql, new Object[]{surgeryID}, (rs, rowNum) -> mapRowToSurgery(rs)).stream().findFirst();
     }
 
+    // Retrieve all Surgery records by doctorID
+    public List<Surgery> getSurgeryByDoctorID(int doctorID) {
+        String sql = "SELECT * FROM Surgery WHERE doctorID = ?";
+        return jdbcTemplate.query(sql, new Object[]{doctorID}, (rs, rowNum) -> mapRowToSurgery(rs));
+    }
+
+    // Retrieve all Surgery records by patientID
+    public List<Surgery> getSurgeryByPatientID(int patientID) {
+        String sql = "SELECT * FROM Surgery WHERE patientID = ?";
+        return jdbcTemplate.query(sql, new Object[]{patientID}, (rs, rowNum) -> mapRowToSurgery(rs));
+    }
+
     // Create a new Surgery record
     public int createSurgery(Surgery surgery) {
         String sql = "INSERT INTO Surgery (surgeryID, patientID, doctorID, type, criticalLevel) VALUES (?, ?, ?, ?, ?)";
@@ -48,6 +60,7 @@ public class SurgeryService {
         surgery.setDoctorID(rs.getInt("doctorID"));
         surgery.setType(rs.getString("type"));
         surgery.setCriticalLevel(rs.getInt("criticalLevel"));
+        surgery.setCost(rs.getInt("cost"));
         return surgery;
     }
 }

@@ -6,16 +6,18 @@ public class Surgery {
     private int doctorID;
     private String type;
     private int criticalLevel;
+    private int cost;
 
     // Constructors
     public Surgery() {}
 
-    public Surgery(int surgeryID, int patientID, int doctorID, String type, int criticalLevel) {
+    public Surgery(int surgeryID, int patientID, int doctorID, String type, int criticalLevel, int cost) {
         this.surgeryID = surgeryID;
         this.patientID = patientID;
         this.doctorID = doctorID;
         this.type = type;
         this.criticalLevel = criticalLevel;
+        this.cost = cost;
     }
 
     // Getters and Setters
@@ -33,5 +35,13 @@ public class Surgery {
 
     public int getCriticalLevel() { return criticalLevel; }
     public void setCriticalLevel(int criticalLevel) { this.criticalLevel = criticalLevel; }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
 }
 
