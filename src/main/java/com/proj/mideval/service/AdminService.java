@@ -1,6 +1,7 @@
 package com.proj.mideval.service;
 
 import com.proj.mideval.model.Admin;
+import com.proj.mideval.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,6 +27,7 @@ public class AdminService {
             Admin admin = new Admin();
             admin.setAdminID(rs.getInt("AdminID"));
             admin.setDoctorID(rs.getInt("DoctorID"));
+            admin.setEmail(rs.getString("Email"));
             admin.setAccessLevel(rs.getString("AccessLevel"));
             admin.setPassword(rs.getString("Password"));
             return admin;
@@ -42,9 +44,15 @@ public class AdminService {
         return jdbcTemplate.query(sql, adminRowMapper, id).stream().findFirst();
     }
 
+    public Optional<Admin> getAdminByEmail(String email) {
+        String sql = "SELECT * FROM Admin WHERE email = ?";
+        return jdbcTemplate.query(sql, new Object[]{email}, (rs, rowNum) -> mapRowToAdmin(rs)).stream().findFirst();
+    }
+
     public Admin createAdmin(Admin admin) {
-        String sql = "INSERT INTO Admin (AdminID, DoctorID, AccessLevel, Password) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, admin.getAdminID(), admin.getDoctorID(), admin.getAccessLevel());
+        String sql = "INSERT INTO Admin (DoctorID, Email ,AccessLevel, Password) VALUES (? ,?, ?, ?)";
+        String hashedPassword = passwordEncoder.encode(admin.getPassword());
+        jdbcTemplate.update(sql, admin.getDoctorID(),admin.getEmail(), admin.getAccessLevel(),hashedPassword);
         return admin;
     }
 
@@ -56,6 +64,17 @@ public class AdminService {
         } else {
             return Optional.empty();
         }
+    }
+
+    public Optional<Admin> authenticateAdmin(String email, String password) {
+        Optional<Admin> adminOpt = getAdminByEmail(email);
+        if (adminOpt.isPresent()) {
+            Admin admin = adminOpt.get();
+            if (passwordEncoder.matches(password, admin.getPassword())) {
+                return Optional.of(admin);
+            }
+        }
+        return Optional.empty();
     }
 
     public boolean deleteAdmin(int id) {
@@ -76,5 +95,14 @@ public class AdminService {
         } else {
             return Optional.empty();
         }
+    }
+    private Admin mapRowToAdmin(ResultSet rs) throws SQLException {
+        Admin admin = new Admin();
+        admin.setAdminID(rs.getInt("AdminID"));
+        admin.setEmail(rs.getString("Email"));
+        admin.setDoctorID(rs.getInt("DoctorID"));
+        admin.setAccessLevel(rs.getString("AccessLevel"));
+        admin.setPassword(rs.getString("Password"));
+        return admin;
     }
 }

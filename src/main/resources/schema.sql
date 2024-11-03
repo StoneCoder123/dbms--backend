@@ -1,23 +1,28 @@
-
-
+create database hospital_db;
+use hospital_db;
+select * from doctor;
 -- TABLES --
-
+select * from Patient;
+drop table Doctor;
+drop table Patient;
 CREATE TABLE Doctor(
-DoctorID INT PRIMARY KEY,
+DoctorID INT PRIMARY KEY auto_increment,
 FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50),
 DOB DATE NOT NULL,
 Education VARCHAR(50),
 Gender CHAR(1) NOT NULL,
 Phone VARCHAR(15),
-mail VARCHAR(80),
+Email VARCHAR(255),
 Post VARCHAR(50),
 Department VARCHAR(50),
-Specialization VARCHAR(30)
+Specialization VARCHAR(30),
+Password VARCHAR(255)
 );
 
+
 CREATE TABLE Patient(
-PatientID INT PRIMARY KEY,
+PatientID INT PRIMARY KEY auto_increment,
 FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50),
 Address VARCHAR(200),
@@ -25,11 +30,13 @@ NTK VARCHAR(50),
 Email VARCHAR(80),
 Gender CHAR(1),
 History VARCHAR(500),
-DOB DATE NOT NULL
+DOB DATE NOT NULL,
+Password VARCHAR(255)
 );
 
+drop table Staff;
 CREATE TABLE Staff(
-StaffID INT PRIMARY KEY,
+StaffID INT PRIMARY KEY auto_increment,
 FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50),
 DOB DATE NOT NULL,
@@ -37,8 +44,11 @@ Education VARCHAR(50),
 Gender CHAR(1),
 Post VARCHAR(30),
 Email VARCHAR(80),
-Phone VARCHAR(15)
+Phone VARCHAR(15),
+Password VARCHAR(255)
 );
+
+drop table Chemist;
 
 CREATE TABLE Chemist(
 ChemistID INT PRIMARY KEY,
@@ -47,7 +57,8 @@ LastName VARCHAR(50),
 DOB DATE NOT NULL,
 Gender CHAR(1),
 Email VARCHAR(80),
-Phone VARCHAR(15)
+Phone VARCHAR(15),
+Password VARCHAR(255)
 );
 
 CREATE TABLE Bill(
@@ -71,10 +82,14 @@ Email VARCHAR(80),
 BillID INT REFERENCES Bill(BillID)
 );
 
+drop table admin;
+
 CREATE TABLE Admin(
-AdminID INT PRIMARY KEY,
+AdminID INT PRIMARY KEY auto_increment,
+Email varchar(80),
 DoctorID INT REFERENCES Doctor(DoctorID),
-AccessLevel VARCHAR(50)
+AccessLevel VARCHAR(50),
+Password VARCHAR(255)
 );
 
 CREATE TABLE Machinery(
@@ -203,6 +218,17 @@ ChemistID INT REFERENCES Chemist(ChemistID),
 Date DATE
 );
 
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fullName VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
 -- TRIGGERS --
 
 DELIMITER $$
@@ -233,15 +259,19 @@ END $$
 
 DELIMITER ;
 
+
+
 -- POPULATION INCREASING PROCEDURE --
 
 INSERT INTO Doctor VALUES
-(1, 'Ashish', 'Bazad', '2004-05-25', 'UG', 'M', '7015584371', 'ashish.student.cse22@iitbhu.ac.in', 'Cardiologist', 'Cardiology', 'Heart Surgeon'),
-(2, 'Eshaan', 'Sodhi', '2004-05-25', 'UG', 'O', '7015589371', 'eshaan.sodhi.cse22@iitbhu.ac.in', 'Gynecologist', 'Gynecology', 'Delivery'),
-(3, 'Shikhar', 'Srivastav', '2004-05-25', 'UG', 'O', '7015588271', 'shikhar.srivastav.cd.cse22@iitbhu.ac.in', 'Neurologist', 'Neurology', 'Brain Tumour'),
-(4, 'Shubham', 'Jain', '2004-03-25', 'UG', 'M', '7015588311', 'shubham.jain.cd.cse22@iitbhu.ac.in', 'Andrologist', 'Andrology', 'Sperm Fertility'),
-(5, 'Tanmay', 'Bisht', '2005-05-25', 'UG', 'M', '7015588321', 'tanmay.bisht.cd.cse22@iitbhu.ac.in', 'Gastrologist', 'Gastrology', 'Dysentery')
+(1, 'Ashish', 'Bazad', '2004-05-25', 'UG', 'M', '7015584371', 'ashish.student.cse22@iitbhu.ac.in', 'Cardiologist', 'Cardiology', 'Heart Surgeon','$2a$10$fVMH6qQJ.J3fxcLc4q4pUucOWUJOZWSdbgxZzIRhJVB9wpX8KXci2'),
+(2, 'Eshaan', 'Sodhi', '2004-05-25', 'UG', 'O', '7015589371', 'eshaan.sodhi.cse22@iitbhu.ac.in', 'Gynecologist', 'Gynecology', 'Delivery','$2a$10$fVMH6qQJ.J3fxcLc4q4pUucOWUJOZWSdbgxZzIRhJVB9wpX8KXci2'),
+(3, 'Shikhar', 'Srivastav', '2004-05-25', 'UG', 'O', '7015588271', 'shikhar.srivastav.cd.cse22@iitbhu.ac.in', 'Neurologist', 'Neurology', 'Brain Tumour','$2a$10$fVMH6qQJ.J3fxcLc4q4pUucOWUJOZWSdbgxZzIRhJVB9wpX8KXci2'),
+(4, 'Shubham', 'Jain', '2004-03-25', 'UG', 'M', '7015588311', 'shubham.jain.cd.cse22@iitbhu.ac.in', 'Andrologist', 'Andrology', 'Sperm Fertility','$2a$10$fVMH6qQJ.J3fxcLc4q4pUucOWUJOZWSdbgxZzIRhJVB9wpX8KXci2'),
+(5, 'Tanmay', 'Bisht', '2005-05-25', 'UG', 'M', '7015588321', 'tanmay.bisht.cd.cse22@iitbhu.ac.in', 'Gastrologist', 'Gastrology', 'Dysentery','$2a$10$fVMH6qQJ.J3fxcLc4q4pUucOWUJOZWSdbgxZzIRhJVB9wpX8KXci2')
 ;
+
+select * from Doctor;
 
 INSERT INTO Staff VALUES
 (1, 'Divya', 'Sharma', '2006-06-06', 'UG', 'F', 'Nurse', 'divya@gmail.com', '1234567890'),
@@ -250,6 +280,7 @@ INSERT INTO Staff VALUES
 (4, 'Priyanshi', 'Jha', '2006-06-07', 'UG', 'F', 'Nurse', 'priyanshi@gmail.com', '1224567890'),
 (5, 'Ameeta', 'Sengupta', '2005-05-05', 'UG', 'F', 'Dietician', 'ameeta@gmail.com', '1234527890')
 ;
+
 
 INSERT INTO Chemist VALUES
 (1, 'Karishma', 'Sanatani', '2004-04-04', 'F', 'karishma@gmail.com', '123456781'),
@@ -287,13 +318,13 @@ INSERT INTO Staff_Operates VALUES
 ;
 
 INSERT INTO Patient VALUES
-(1, 'Sanchita', 'Kalra', 'House No. 224, Street No. 1, Chandigarh', 'Kassi', 'sanchita@gmail.com', 'F', 'None', '2006-07-06'),
-(2, 'Kshitij', 'Sharma', 'House No. 225, Street No. 32, Jamshedpur, Jharkhand', 'Priyanshi Goyal', 'kshitij@gmail.com', 'O', 'None', '2004-07-06'),
-(3, 'Deepanshu', 'Sau', 'House No. 214, Street No. 2, Tata City, Jharkhand', 'Bhakti', 'deepanshu@gmail.com', 'M', 'None', '2004-04-11'),
-(4, 'Ashish', 'Dalal', 'House No. 324, Street No. 34, Nagpur', 'Manya Pandey', 'ashishdalal@gmail.com', 'M', 'None', '2004-12-11'),
-(5, 'Rohit', 'Kaushik', 'House No. 24, Street No. 2, Varanasi', 'Tanmay Jain', 'rohit@gmail.com', 'M', 'None', '2006-02-06'),
-(6, 'Nikhil', 'Totla', 'House No. 4, Street No. 3, Chandigarh', 'Jagriti', 'nikhil@gmail.com', 'M', 'None', '2004-04-06'),
-(7, 'Abhishek', 'Chauhan', 'House No. 42, Street No. 23, Gurugram, Haryana', 'Khushi', 'abhishek@gmail.com', 'M', 'None', '2004-05-07')
+(1, 'Sanchita', 'Kalra', 'House No. 224, Street No. 1, Chandigarh', 'Kassi', 'sanchita@gmail.com', 'F', 'None', '2006-07-06','$Z1pL@w7R#4g!3dQ'),
+(2, 'Kshitij', 'Sharma', 'House No. 225, Street No. 32, Jamshedpur, Jharkhand', 'Priyanshi Goyal', 'kshitij@gmail.com', 'O', 'None', '2004-07-06','F@8p*T1$kR9&u2Z^'),
+(3, 'Deepanshu', 'Sau', 'House No. 214, Street No. 2, Tata City, Jharkhand', 'Bhakti', 'deepanshu@gmail.com', 'M', 'None', '2004-04-11','m^3$H1x&0L!jV9*c'),
+(4, 'Ashish', 'Dalal', 'House No. 324, Street No. 34, Nagpur', 'Manya Pandey', 'ashishdalal@gmail.com', 'M', 'None', '2004-12-11','Q4%lP2&gK!8nY@1z'),
+(5, 'Rohit', 'Kaushik', 'House No. 24, Street No. 2, Varanasi', 'Tanmay Jain', 'rohit@gmail.com', 'M', 'None', '2006-02-06','W!7cX@0m#5uR2$Z%'),
+(6, 'Nikhil', 'Totla', 'House No. 4, Street No. 3, Chandigarh', 'Jagriti', 'nikhil@gmail.com', 'M', 'None', '2004-04-06','W!7cX@0m#5uR2$Z%'),
+(7, 'Abhishek', 'Chauhan', 'House No. 42, Street No. 23, Gurugram, Haryana', 'Khushi', 'abhishek@gmail.com', 'M', 'None', '2004-05-07','W!7cX@0m#5uR2$Z%')
 ;
 
 INSERT INTO Surgery VALUES
@@ -428,3 +459,5 @@ INSERT INTO BILLING_DEPARTMENT VALUES
 (1, 'Pharmacy Billing', '1234512345', 'pharmacybilling@gmail.com', 1),
 (2, 'Consulting Billing', '1234511345', 'consultingbilling@gmail.com', 2)
 ;
+
+show 

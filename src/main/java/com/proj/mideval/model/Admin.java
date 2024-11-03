@@ -3,15 +3,17 @@ package com.proj.mideval.model;
 public class Admin {
     private int adminID;
     private int doctorID;
+    private String email;
     private String accessLevel;
     private String password;
 
     // Constructors
     public Admin() {}
 
-    public Admin(int adminID, int doctorID, String accessLevel,String password) {
+    public Admin(int adminID, int doctorID, String email ,String accessLevel,String password) {
         this.adminID = adminID;
         this.doctorID = doctorID;
+        this.email = email;
         this.accessLevel = accessLevel;
         this.password = password;
     }
@@ -32,5 +34,13 @@ public class Admin {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

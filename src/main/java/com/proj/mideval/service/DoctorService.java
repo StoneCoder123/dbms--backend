@@ -68,11 +68,12 @@ public class DoctorService {
         doctor.setEducation(rs.getString("Education"));
         doctor.setGender(rs.getString("Gender"));
         doctor.setPhone(rs.getString("Phone"));
-        doctor.setEmail(rs.getString("Email"));
+        doctor.setEmail(rs.getString("Email")); // Ensure this line is present and correct
         doctor.setPost(rs.getString("Post"));
         doctor.setDepartment(rs.getString("Department"));
         doctor.setSpecialization(rs.getString("Specialization"));
-        doctor.setPassword(rs.getString("Password")); // Retrieve password
+        doctor.setPassword(rs.getString("Password")); // Ensure this line is present and correct
         return doctor;
     }
+
 }

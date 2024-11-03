@@ -41,7 +41,6 @@ public class DoctorController {
     public ResponseEntity<Doctor> createDoctor(@RequestBody Doctor doctor) {
         int result = doctorService.createDoctor(doctor);
         if (result > 0) {
-            doctor.setPassword(null); // Hide password in response
             return ResponseEntity.status(201).body(doctor);
         }
         return ResponseEntity.badRequest().build();

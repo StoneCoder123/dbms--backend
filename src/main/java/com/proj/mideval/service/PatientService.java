@@ -7,10 +7,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PatientService {
@@ -47,9 +49,9 @@ public class PatientService {
     }
 
     public int createPatient(Patient patient) {
-        String sql = "INSERT INTO Patient (PatientID, FirstName, LastName, Address, NTK, Email, Gender, History, Dob, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Patient (FirstName, LastName, Address, NTK, Email, Gender, History, Dob, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String hashedPassword = passwordEncoder.encode(patient.getPassword());
-        return jdbcTemplate.update(sql, patient.getPatientID(), patient.getFirstName(), patient.getLastName(), patient.getAddress(), patient.getNTK(), patient.getEmail(), patient.getGender(), patient.getHistory(), patient.getDob(), hashedPassword);
+        return jdbcTemplate.update(sql, patient.getFirstName(), patient.getLastName(), patient.getAddress(), patient.getNTK(), patient.getEmail(), patient.getGender(), patient.getHistory(), patient.getDob(), hashedPassword);
     }
 
     public int updatePatient(int patientID, Patient patient) {

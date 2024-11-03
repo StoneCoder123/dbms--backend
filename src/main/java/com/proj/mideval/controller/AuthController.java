@@ -2,6 +2,8 @@ package com.proj.mideval.controller;
 
 import com.proj.mideval.model.Patient;
 import com.proj.mideval.model.Doctor;
+import com.proj.mideval.model.Admin;
+import com.proj.mideval.service.AdminService;
 import com.proj.mideval.service.PatientService;
 import com.proj.mideval.service.DoctorService;
 import com.proj.mideval.util.JwtUtil;
@@ -23,6 +25,9 @@ public class AuthController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private AdminService adminService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password, @RequestParam String userType) {
@@ -54,7 +59,19 @@ public class AuthController {
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid doctor credentials");
             }
-        } else {
+        } else if ("ADMIN".equalsIgnoreCase(userType)) {
+            Optional<Admin> adminOpt = adminService.authenticateAdmin(email, password);
+            if (adminOpt.isPresent()) {
+                token = JwtUtil.generateToken(email, "ADMIN");
+                response.put("userType", "ADMIN");
+                response.put("token", token);
+                response.put("email", email);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
+            }
+        }
+        else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
         }
     }
