@@ -55,7 +55,7 @@ public class AppointmentService {
 
     // Create an appointment request (patient requests an appointment)
     public int createAppointmentRequest(int patientID, int doctorID) {
-        String sql = "INSERT INTO Appointments (patientID, doctorID, time, status) VALUES (?, ?, NULL, 0)";
+        String sql = "INSERT INTO Appointments (patientID, doctorID, time, status, cost) VALUES (?, ?, NULL, 0, 0)";
         return jdbcTemplate.update(sql, patientID, doctorID);
     }
 
