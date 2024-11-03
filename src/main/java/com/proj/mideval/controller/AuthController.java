@@ -52,9 +52,11 @@ public class AuthController {
             Optional<Doctor> doctor = doctorService.authenticateDoctor(email, password);
             if (doctor.isPresent()) {
                 token = JwtUtil.generateToken(email, "DOCTOR");
+                String id = doctorService.getDoctorIDByEmail(email).toString();
                 response.put("userType", "DOCTOR");
                 response.put("token", token);
                 response.put("email", email);
+                response.put("id", id);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid doctor credentials");
@@ -63,9 +65,11 @@ public class AuthController {
             Optional<Admin> adminOpt = adminService.authenticateAdmin(email, password);
             if (adminOpt.isPresent()) {
                 token = JwtUtil.generateToken(email, "ADMIN");
+                String id = adminService.getAdminIDByEmail(email).toString();
                 response.put("userType", "ADMIN");
                 response.put("token", token);
                 response.put("email", email);
+                response.put("id", id);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
