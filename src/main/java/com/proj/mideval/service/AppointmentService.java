@@ -60,9 +60,9 @@ public class AppointmentService {
     }
 
     // Grant an appointment (doctor assigns a time and updates the status)
-    public int grantAppointment(int appointmentID, Date appointmentTime) {
-        String sql = "UPDATE Appointments SET time = ?, status = 1 WHERE appointmentID = ?";
-        return jdbcTemplate.update(sql, new Timestamp(appointmentTime.getTime()), appointmentID);
+    public int grantAppointment(int appointmentID, Date appointmentTime, int cost) {
+        String sql = "UPDATE Appointments SET time = ?,cost=?, status = 1 WHERE appointmentID = ?";
+        return jdbcTemplate.update(sql, new Timestamp(appointmentTime.getTime()),cost, appointmentID);
     }
 
     public int updateAppointmentStatus(int appointmentID, int status) {
