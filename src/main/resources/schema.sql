@@ -7,7 +7,7 @@ FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50),
 DOB DATE NOT NULL,
 Education VARCHAR(50),
-Gender CHAR(1) NOT NULL,
+Gender VARCHAR(10) NOT NULL,
 Phone VARCHAR(15),
 Email VARCHAR(255),
 Post VARCHAR(50),
@@ -24,7 +24,7 @@ LastName VARCHAR(50),
 Address VARCHAR(200),
 NTK VARCHAR(50),
 Email VARCHAR(80),
-Gender CHAR(1),
+Gender VARCHAR(50),
 History VARCHAR(500),
 DOB DATE NOT NULL,
 Password VARCHAR(255)
@@ -36,7 +36,7 @@ FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50),
 DOB DATE NOT NULL,
 Education VARCHAR(50),
-Gender CHAR(1),
+Gender VARCHAR(50),
 Post VARCHAR(30),
 Email VARCHAR(80),
 Phone VARCHAR(15),
@@ -104,7 +104,8 @@ SurgeryID INT PRIMARY KEY auto_increment,
 PatientID INT REFERENCES Patient(PatientID),
 DoctorID INT REFERENCES Doctor(DoctorID),
 Type VARCHAR(30),
-CriticalLevel INT NOT NULL
+CriticalLevel INT NOT NULL,
+Cost INT DEFAULT 0
 );
 
 CREATE TABLE Helps_In(
@@ -226,7 +227,8 @@ CREATE TABLE appointments (
     time DATETIME DEFAULT NULL,
     status INT NOT NULL,
     FOREIGN KEY (patientID) REFERENCES patient(patientID),
-    FOREIGN KEY (doctorID) REFERENCES doctor(doctorID)
+    FOREIGN KEY (doctorID) REFERENCES doctor(doctorID), 
+    Cost INT DEFAULT 0
 );
 
 

@@ -59,6 +59,8 @@ public class SurgeryController {
 //        return surgeryService.getSurgeriesByDoctorId(doctorID);
 //    }
 
+
+
     // Create a new Surgery record
     @PostMapping("/{doctorId}")
     public ResponseEntity<Surgery> createSurgery(@PathVariable int doctorId, @RequestBody Surgery surgery) {
