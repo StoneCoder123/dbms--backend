@@ -226,7 +226,15 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
+CREATE TABLE appointments (
+    appointmentID INT AUTO_INCREMENT PRIMARY KEY,
+    patientID INT NOT NULL,
+    doctorID INT NOT NULL,
+    time DATETIME DEFAULT NULL,
+    status INT NOT NULL,
+    FOREIGN KEY (patientID) REFERENCES patient(patientID),
+    FOREIGN KEY (doctorID) REFERENCES doctor(doctorID)
+);
 
 
 -- TRIGGERS --

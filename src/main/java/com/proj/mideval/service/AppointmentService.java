@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -16,46 +17,66 @@ public class AppointmentService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // Method to get all appointments
-    public List<Appointment> getAllAppointments() {
-        String sql = "SELECT * FROM Appointment";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToAppointment(rs));
+    public List<Appointment> getPreviousAppointmentsForPatient(int patientID) {
+        String sql = "SELECT * FROM Appointments WHERE patientID = ? AND status = 1 AND time < ?";
+        return jdbcTemplate.query(sql, new Object[]{patientID, new Timestamp(new Date().getTime())},
+                (rs, rowNum) -> mapRowToAppointment(rs));
     }
 
-    // Method to get an appointment by ID
-    public Optional<Appointment> getAppointmentById(int appointmentID) {
-        String sql = "SELECT * FROM Appointment WHERE AppointmentID = ?";
-        return jdbcTemplate.query(sql, new Object[]{appointmentID}, (rs, rowNum) -> mapRowToAppointment(rs)).stream().findFirst();
+    public List<Appointment> getUpcomingAppointmentsForPatient(int patientID) {
+        String sql = "SELECT * FROM Appointments WHERE patientID = ? AND status = 1 AND time >= ?";
+        return jdbcTemplate.query(sql, new Object[]{patientID, new Timestamp(new Date().getTime())},
+                (rs, rowNum) -> mapRowToAppointment(rs));
     }
 
-    // Method to create a new appointment
-    public int createAppointment(Appointment appointment) {
-        String sql = "INSERT INTO Appointment (PatientID, DoctorID, Date, Time) VALUES (?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, appointment.getPatientID(), appointment.getDoctorID(),
-                new java.sql.Date(appointment.getDate().getTime()), appointment.getTime());
+    public List<Appointment> getRequestedAppointmentsForPatient(int patientID) {
+        String sql = "SELECT * FROM Appointments WHERE patientID = ? AND status = 0";
+        return jdbcTemplate.query(sql, new Object[]{patientID},
+                (rs, rowNum) -> mapRowToAppointment(rs));
     }
 
-    // Method to update an existing appointment
-    public int updateAppointment(int appointmentID, Appointment appointment) {
-        String sql = "UPDATE Appointment SET PatientID = ?, DoctorID = ?, Date = ?, Time = ? WHERE AppointmentID = ?";
-        return jdbcTemplate.update(sql, appointment.getPatientID(), appointment.getDoctorID(),
-                new java.sql.Date(appointment.getDate().getTime()), appointment.getTime(), appointmentID);
+    public List<Appointment> getPreviousAppointmentsForDoctor(int doctorID) {
+        String sql = "SELECT * FROM Appointments WHERE doctorID = ? AND status = 1 AND time < ?";
+        return jdbcTemplate.query(sql, new Object[]{doctorID, new Timestamp(new Date().getTime())},
+                (rs, rowNum) -> mapRowToAppointment(rs));
     }
 
-    // Method to delete an appointment
-    public int deleteAppointment(int appointmentID) {
-        String sql = "DELETE FROM Appointment WHERE AppointmentID = ?";
-        return jdbcTemplate.update(sql, appointmentID);
+    public List<Appointment> getUpcomingAppointmentsForDoctor(int doctorID) {
+        String sql = "SELECT * FROM Appointments WHERE doctorID = ? AND status = 1 AND time >= ?";
+        return jdbcTemplate.query(sql, new Object[]{doctorID, new Timestamp(new Date().getTime())},
+                (rs, rowNum) -> mapRowToAppointment(rs));
     }
 
-    // Method to map a ResultSet row to an Appointment object
+    public List<Appointment> getRequestedAppointmentsForDoctor(int doctorID) {
+        String sql = "SELECT * FROM Appointments WHERE doctorID = ? AND status = 0";
+        return jdbcTemplate.query(sql, new Object[]{doctorID},
+                (rs, rowNum) -> mapRowToAppointment(rs));
+    }
+
+    // Create an appointment request (patient requests an appointment)
+    public int createAppointmentRequest(int patientID, int doctorID) {
+        String sql = "INSERT INTO Appointments (patientID, doctorID, time, status) VALUES (?, ?, NULL, 0)";
+        return jdbcTemplate.update(sql, patientID, doctorID);
+    }
+
+    // Grant an appointment (doctor assigns a time and updates the status)
+    public int grantAppointment(int appointmentID, Date appointmentTime) {
+        String sql = "UPDATE Appointments SET time = ?, status = 1 WHERE appointmentID = ?";
+        return jdbcTemplate.update(sql, new Timestamp(appointmentTime.getTime()), appointmentID);
+    }
+
+    public int updateAppointmentStatus(int appointmentID, int status) {
+        String sql = "UPDATE Appointments SET status = ? WHERE appointmentID = ?";
+        return jdbcTemplate.update(sql, status, appointmentID);
+    }
+
     private Appointment mapRowToAppointment(ResultSet rs) throws SQLException {
         Appointment appointment = new Appointment();
-        appointment.setAppointmentID(rs.getInt("AppointmentID"));
-        appointment.setPatientID(rs.getInt("PatientID"));
-        appointment.setDoctorID(rs.getInt("DoctorID"));
-        appointment.setDate(rs.getDate("Date")); // Ensure the SQL type matches
-        appointment.setTime(rs.getString("Time"));
+        appointment.setAppointmentID(rs.getInt("appointmentID"));
+        appointment.setPatientID(rs.getInt("patientID"));
+        appointment.setDoctorID(rs.getInt("doctorID"));
+        appointment.setTime(rs.getTimestamp("time"));
+        appointment.setStatus(rs.getInt("status"));
         return appointment;
     }
 }
