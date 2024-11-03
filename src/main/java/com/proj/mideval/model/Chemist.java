@@ -10,11 +10,12 @@ public class Chemist {
     private String gender;
     private String email;
     private String phone;
+    private String password;
 
     // Constructors
     public Chemist() {}
 
-    public Chemist(int chemistID, String firstName, String lastName, Date dob, String gender, String email, String phone) {
+    public Chemist(int chemistID, String firstName, String lastName, Date dob, String gender, String email, String phone, String password) {
         this.chemistID = chemistID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,6 +23,7 @@ public class Chemist {
         this.gender = gender;
         this.email = email;
         this.phone = phone;
+        this.password = password;
     }
 
     // Getters and Setters
@@ -45,5 +47,13 @@ public class Chemist {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
 
