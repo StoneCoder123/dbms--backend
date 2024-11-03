@@ -1,3 +1,4 @@
+
 create database hospital_db;
 use hospital_db;
 
@@ -96,8 +97,7 @@ MedicineID INT PRIMARY KEY auto_increment,
 MedicineName VARCHAR(50) NOT NULL,
 Cost INT,
 Type VARCHAR(50),
-CompanyName VARCHAR(50),
-Amount INT DEFAULT 0
+CompanyName VARCHAR(50)
 );
 
 CREATE TABLE Surgery(
@@ -115,6 +115,13 @@ StaffID INT REFERENCES STAFF(STAFFID),
 Rating INT
 );
 
+CREATE TABLE Expenditure_Department(
+DeptID INT PRIMARY KEY,
+Name VARCHAR(30) NOT NULL,
+Phone VARCHAR(15),
+Email VARCHAR(80)
+);
+
 CREATE TABLE Approves_Expense(
 AdminID INT REFERENCES Admin(AdminID),
 DeptID INT REFERENCES Expenditure_Department(DeptID),
@@ -122,12 +129,7 @@ Type VARCHAR(30),
 Amount INT
 );
 
-CREATE TABLE Expenditure_Department(
-DeptID INT PRIMARY KEY,
-Name VARCHAR(30) NOT NULL,
-Phone VARCHAR(15),
-Email VARCHAR(80)
-);
+
 
 CREATE TABLE WorkerIDs(
 DoctorID INT REFERENCES Doctor(DoctorID),
@@ -237,6 +239,15 @@ CREATE TABLE appointments (
 
 DELIMITER $$
 
+create trigger surgeryBill
+after insert on Surgery
+for each row
+BEGIN
+	insert into BILL(PatientID, TotalCost) value
+    (new.PatientID, new.Cost);
+END $$
+
+
 CREATE TRIGGER before_insert_doctor
 AFTER INSERT ON DOCTOR
 FOR EACH ROW
@@ -262,3 +273,6 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+select * from bill;
