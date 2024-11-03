@@ -247,6 +247,14 @@ BEGIN
     (new.PatientID, new.Cost);
 END $$
 
+create trigger appointmentBill
+after insert on appointments
+for each row
+BEGIN
+	insert into BILL(PatientID, TotalCost) value
+    (new.PatientID, new.Cost);
+END $$
+
 
 CREATE TRIGGER before_insert_doctor
 AFTER INSERT ON DOCTOR
@@ -273,6 +281,3 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-
-select * from bill;
