@@ -42,8 +42,8 @@ public class SurgeryService {
 
     // Create a new Surgery record
     public int createSurgery(Surgery surgery) {
-        String sql = "INSERT INTO Surgery (patientID, doctorID, type, criticalLevel, Cost) VALUES (?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, surgery.getPatientID(), surgery.getDoctorID(), surgery.getType(), surgery.getCriticalLevel(), surgery.getCost());
+        String sql = "INSERT INTO Surgery (surgeryID, patientID, doctorID, type, criticalLevel, cost) VALUES (?, ?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, surgery.getSurgeryID(), surgery.getPatientID(), surgery.getDoctorID(), surgery.getType(), surgery.getCriticalLevel(), surgery.getCost());
     }
 
     // Delete a Surgery record by surgeryID
