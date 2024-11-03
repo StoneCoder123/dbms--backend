@@ -42,6 +42,11 @@ public class BillService {
         return jdbcTemplate.update(sql, billID);
     }
 
+    public List<Bill> getgetBillByPatientID(int patientID){
+        String sql = "SELECT * FROM Bill WHERE patientID = ?";
+        return jdbcTemplate.query(sql, new Object[]{patientID}, (rs, rowNum) -> mapRowToBill(rs));
+    }
+
     private Bill mapRowToBill(ResultSet rs) throws SQLException {
         Bill bill = new Bill();
         bill.setBillID(rs.getInt("BillID"));
