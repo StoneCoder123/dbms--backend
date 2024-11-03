@@ -22,6 +22,8 @@ public class AdminController {
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
 
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Admin> getAdminById(@PathVariable int id) {
         Optional<Admin> admin = adminService.getAdminById(id);

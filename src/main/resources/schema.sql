@@ -96,7 +96,8 @@ MedicineID INT PRIMARY KEY auto_increment,
 MedicineName VARCHAR(50) NOT NULL,
 Cost INT,
 Type VARCHAR(50),
-CompanyName VARCHAR(50)
+CompanyName VARCHAR(50),
+Amount INT DEFAULT 0
 );
 
 CREATE TABLE Surgery(

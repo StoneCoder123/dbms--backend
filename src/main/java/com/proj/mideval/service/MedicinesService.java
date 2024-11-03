@@ -30,8 +30,8 @@ public class MedicinesService {
 
     // Method to create a new Medicines record
     public int createMedicines(Medicines medicines) {
-        String sql = "INSERT INTO Medicines (MedicineID, MedicineName, Cost, Type, CompanyName) VALUES (?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, medicines.getMedicineID(), medicines.getMedicineName(), medicines.getCost(), medicines.getType(), medicines.getCompanyName());
+        String sql = "INSERT INTO Medicines (MedicineName, Cost, Type, CompanyName) VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, medicines.getMedicineName(), medicines.getCost(), medicines.getType(), medicines.getCompanyName());
     }
 
     // Method to update an existing Medicines record
@@ -54,6 +54,7 @@ public class MedicinesService {
         medicines.setCost(rs.getInt("Cost"));
         medicines.setType(rs.getString("Type"));
         medicines.setCompanyName(rs.getString("CompanyName"));
+        medicines.setAmount(rs.getInt("Amount"));
         return medicines;
     }
 }
