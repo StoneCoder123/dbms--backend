@@ -29,6 +29,47 @@ public class AuthController {
     @Autowired
     private AdminService adminService;
 
+    @GetMapping("/userinfo")
+    public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String token) {
+        String email = JwtUtil.extractEmail(token);
+        String userType = JwtUtil.extractUserType(token);
+        Map<String, Object> userDetails = new HashMap<>();
+
+        switch (userType.toUpperCase()) {
+            case "PATIENT":
+                Optional<Patient> patientOpt = patientService.getPatientByEmail(email);
+                if (patientOpt.isPresent()) {
+                    Patient patient = patientOpt.get();
+                    userDetails.put("firstName", patient.getFirstName());
+                    userDetails.put("lastName", patient.getLastName());
+                    userDetails.put("email", patient.getEmail());
+                    userDetails.put("userType", "PATIENT");
+                    userDetails.put("ntk", patient.getNTK());
+                    userDetails.put("history", patient.getHistory());
+                }
+                break;
+
+            case "DOCTOR":
+                Optional<Doctor> doctorOpt = doctorService.getDoctorByEmail(email);
+                if (doctorOpt.isPresent()) {
+                    Doctor doctor = doctorOpt.get();
+                    userDetails.put("firstName", doctor.getFirstName());
+                    userDetails.put("lastName", doctor.getLastName());
+                    userDetails.put("email", doctor.getEmail());
+                    userDetails.put("userType", "DOCTOR");
+                }
+                break;
+
+            case "ADMIN":
+                break;
+
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
+        }
+
+        return ResponseEntity.ok(userDetails);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password, @RequestParam String userType) {
         String token;
@@ -52,11 +93,9 @@ public class AuthController {
             Optional<Doctor> doctor = doctorService.authenticateDoctor(email, password);
             if (doctor.isPresent()) {
                 token = JwtUtil.generateToken(email, "DOCTOR");
-                String id = doctorService.getDoctorIDByEmail(email).toString();
                 response.put("userType", "DOCTOR");
                 response.put("token", token);
                 response.put("email", email);
-                response.put("id", id);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid doctor credentials");
@@ -65,11 +104,9 @@ public class AuthController {
             Optional<Admin> adminOpt = adminService.authenticateAdmin(email, password);
             if (adminOpt.isPresent()) {
                 token = JwtUtil.generateToken(email, "ADMIN");
-                String id = adminService.getAdminIDByEmail(email).toString();
                 response.put("userType", "ADMIN");
                 response.put("token", token);
                 response.put("email", email);
-                response.put("id", id);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
