@@ -49,6 +49,11 @@ public class AdminService {
         return jdbcTemplate.query(sql, new Object[]{email}, (rs, rowNum) -> mapRowToAdmin(rs)).stream().findFirst();
     }
 
+    public Integer getAdminIDByEmail(String email) {
+        String sql = "SELECT AdminID FROM Admin WHERE Email = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, email);
+    }
+
     public Admin createAdmin(Admin admin) {
         String sql = "INSERT INTO Admin (DoctorID, Email ,AccessLevel, Password) VALUES (? ,?, ?, ?)";
         String hashedPassword = passwordEncoder.encode(admin.getPassword());

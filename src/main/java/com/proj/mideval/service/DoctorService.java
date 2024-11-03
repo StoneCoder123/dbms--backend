@@ -36,6 +36,11 @@ public class DoctorService {
         return jdbcTemplate.query(sql, new Object[]{email}, (rs, rowNum) -> mapRowToDoctor(rs)).stream().findFirst();
     }
 
+    public Integer getDoctorIDByEmail(String email) {
+        String sql = "SELECT DoctorID FROM Doctor WHERE Email = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, email);
+    }
+
     public int createDoctor(Doctor doctor) {
         String sql = "INSERT INTO Doctor (DoctorID, FirstName, LastName, Dob, Education, Gender, Phone, Email, Post, Department, Specialization, Password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String encodedPassword = passwordEncoder.encode(doctor.getPassword()); // Encode password
