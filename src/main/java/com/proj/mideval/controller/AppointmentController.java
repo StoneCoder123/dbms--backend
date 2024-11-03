@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/appointments")
@@ -16,41 +16,67 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @GetMapping
-    public List<Appointment> getAllAppointments() {
-        return appointmentService.getAllAppointments();
-    }
-
-    @GetMapping("/{appointmentID}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable int appointmentID) {
-        Optional<Appointment> appointment = appointmentService.getAppointmentById(appointmentID);
-        return appointment.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
-        int result = appointmentService.createAppointment(appointment);
+    // Patient requests an appointment with a specific doctor
+    @PostMapping("/patient/{patientID}/request")
+    public String requestAppointment(@PathVariable int patientID, @RequestParam int doctorID) {
+        int result = appointmentService.createAppointmentRequest(patientID, doctorID);
         if (result > 0) {
-            return ResponseEntity.status(201).body(appointment);  // 201 Created
+            return "Appointment request successfully created.";
+        } else {
+            return "Failed to create appointment request.";
         }
-        return ResponseEntity.badRequest().build();
     }
 
-    @PutMapping("/{appointmentID}")
-    public ResponseEntity<Appointment> updateAppointment(@PathVariable int appointmentID, @RequestBody Appointment appointment) {
-        int result = appointmentService.updateAppointment(appointmentID, appointment);
+    // Doctor grants an appointment by setting the time and updating the status
+    @PutMapping("/doctor/{doctorID}/grant")
+    public String grantAppointment(@RequestParam int appointmentID, @RequestParam Date appointmentTime) {
+        int result = appointmentService.grantAppointment(appointmentID, appointmentTime);
         if (result > 0) {
-            return ResponseEntity.ok(appointment);
+            return "Appointment successfully granted.";
+        } else {
+            return "Failed to grant appointment.";
         }
-        return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{appointmentID}")
-    public ResponseEntity<Void> deleteAppointment(@PathVariable int appointmentID) {
-        int result = appointmentService.deleteAppointment(appointmentID);
-        if (result > 0) {
-            return ResponseEntity.noContent().build();  // 204 No Content
-        }
-        return ResponseEntity.notFound().build();
+    // Get previous appointments of a patient
+    @GetMapping("/patient/{patientID}/previous")
+    public ResponseEntity<List<Appointment>> getPreviousAppointmentsForPatient(@PathVariable int patientID) {
+        List<Appointment> appointments = appointmentService.getPreviousAppointmentsForPatient(patientID);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Get upcoming appointments of a patient
+    @GetMapping("/patient/{patientID}/upcoming")
+    public ResponseEntity<List<Appointment>> getUpcomingAppointmentsForPatient(@PathVariable int patientID) {
+        List<Appointment> appointments = appointmentService.getUpcomingAppointmentsForPatient(patientID);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Get requested appointments of a patient
+    @GetMapping("/patient/{patientID}/requested")
+    public ResponseEntity<List<Appointment>> getRequestedAppointmentsForPatient(@PathVariable int patientID) {
+        List<Appointment> appointments = appointmentService.getRequestedAppointmentsForPatient(patientID);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Get previous appointments of a doctor
+    @GetMapping("/doctor/{doctorID}/previous")
+    public ResponseEntity<List<Appointment>> getPreviousAppointmentsForDoctor(@PathVariable int doctorID) {
+        List<Appointment> appointments = appointmentService.getPreviousAppointmentsForDoctor(doctorID);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Get upcoming appointments of a doctor
+    @GetMapping("/doctor/{doctorID}/upcoming")
+    public ResponseEntity<List<Appointment>> getUpcomingAppointmentsForDoctor(@PathVariable int doctorID) {
+        List<Appointment> appointments = appointmentService.getUpcomingAppointmentsForDoctor(doctorID);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Get requested appointments of a doctor
+    @GetMapping("/doctor/{doctorID}/requested")
+    public ResponseEntity<List<Appointment>> getRequestedAppointmentsForDoctor(@PathVariable int doctorID) {
+        List<Appointment> appointments = appointmentService.getRequestedAppointmentsForDoctor(doctorID);
+        return ResponseEntity.ok(appointments);
     }
 }

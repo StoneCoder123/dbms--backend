@@ -1,24 +1,23 @@
 package com.proj.mideval.model;
 
-
 import java.util.Date;
 
 public class Appointment {
     private int appointmentID;
     private int patientID;
     private int doctorID;
-    private Date date;
-    private String time;
+    private Date time;
+    private int status; // 0 = requested, 1 = granted
 
     // Constructors
     public Appointment() {}
 
-    public Appointment(int appointmentID, int patientID, int doctorID, Date date, String time) {
+    public Appointment(int appointmentID, int patientID, int doctorID, Date time, int status) {
         this.appointmentID = appointmentID;
         this.patientID = patientID;
         this.doctorID = doctorID;
-        this.date = date;
         this.time = time;
+        this.status = status;
     }
 
     // Getters and Setters
@@ -31,9 +30,9 @@ public class Appointment {
     public int getDoctorID() { return doctorID; }
     public void setDoctorID(int doctorID) { this.doctorID = doctorID; }
 
-    public Date getDate() { return date; }
-    public void setDate(Date date) { this.date = date; }
+    public Date getTime() { return time; }
+    public void setTime(Date time) { this.time = time; }
 
-    public String getTime() { return time; }
-    public void setTime(String time) { this.time = time; }
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 }
