@@ -36,6 +36,11 @@ public class BillController {
         return ResponseEntity.badRequest().build();
     }
 
+    @GetMapping("patient/{patientID}")
+    public List<Bill> getBillbyPatientID(@PathVariable int patientID){
+        return billService.getgetBillByPatientID(patientID);
+    }
+
     @PutMapping("/{billID}")
     public ResponseEntity<Bill> updateBill(@PathVariable int billID, @RequestBody Bill bill) {
         int result = billService.updateBill(billID, bill);
