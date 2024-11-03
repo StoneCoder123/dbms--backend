@@ -29,8 +29,8 @@ public class AppointmentController {
 
     // Doctor grants an appointment by setting the time and updating the status
     @PutMapping("/doctor/{doctorID}/grant")
-    public String grantAppointment(@RequestParam int appointmentID, @RequestParam Date appointmentTime) {
-        int result = appointmentService.grantAppointment(appointmentID, appointmentTime);
+    public String grantAppointment(@RequestParam int appointmentID, @RequestParam Date appointmentTime,@RequestParam int cost) {
+        int result = appointmentService.grantAppointment(appointmentID, appointmentTime, cost);
         if (result > 0) {
             return "Appointment successfully granted.";
         } else {
