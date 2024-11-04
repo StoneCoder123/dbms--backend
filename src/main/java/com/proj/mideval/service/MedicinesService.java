@@ -2,6 +2,7 @@ package com.proj.mideval.service;
 
 import com.proj.mideval.model.Medicines;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +29,27 @@ public class MedicinesService {
         return jdbcTemplate.query(sql, new Object[]{medicineID}, (rs, rowNum) -> mapRowToMedicines(rs)).stream().findFirst();
     }
 
+    public Integer getMedicineIDByName(String name) {
+        String sql = "SELECT MedicineID FROM Medicines WHERE MedicineName = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, Integer.class, name);
+        } catch (EmptyResultDataAccessException e) {
+            return 0; // return 0 if the medicine doesn't exist
+        }
+    }
+
+
+
     // Method to create a new Medicines record
     public int createMedicines(Medicines medicines) {
-        String sql = "INSERT INTO Medicines (MedicineName, Cost, Type, CompanyName) VALUES (?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, medicines.getMedicineName(), medicines.getCost(), medicines.getType(), medicines.getCompanyName());
+        String sql = "INSERT INTO Medicines (MedicineName, Cost, Type, CompanyName, Amount) VALUES (?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, medicines.getMedicineName(), medicines.getCost(), medicines.getType(), medicines.getCompanyName(), medicines.getAmount());
     }
 
     // Method to update an existing Medicines record
     public int updateMedicines(int medicineID, Medicines medicines) {
-        String sql = "UPDATE Medicines SET MedicineName = ?, Cost = ?, Type = ?, CompanyName = ? WHERE MedicineID = ?";
-        return jdbcTemplate.update(sql, medicines.getMedicineName(), medicines.getCost(), medicines.getType(), medicines.getCompanyName(), medicineID);
+        String sql = "UPDATE Medicines SET MedicineName = ?, Cost = ?, Type = ?, CompanyName = ? , Amount = ? WHERE MedicineID = ?";
+        return jdbcTemplate.update(sql, medicines.getMedicineName(), medicines.getCost(), medicines.getType(), medicines.getCompanyName(), medicines.getAmount(), medicineID);
     }
 
     // Method to delete a Medicines record
