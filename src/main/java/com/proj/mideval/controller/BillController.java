@@ -16,40 +16,61 @@ public class BillController {
     @Autowired
     private BillService billService;
 
+    // Get all bills
     @GetMapping
     public List<Bill> getAllBills() {
         return billService.getAllBills();
     }
 
+    // Get a bill by ID
     @GetMapping("/{billID}")
     public ResponseEntity<Bill> getBillById(@PathVariable int billID) {
         Optional<Bill> bill = billService.getBillById(billID);
         return bill.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    // 1) Create a new bill
     @PostMapping
-    public ResponseEntity<Bill> createBill(@RequestBody Bill bill) {
-        int result = billService.createBill(bill);
+    public ResponseEntity<Bill> createBill(@RequestParam int patientID, @RequestParam int totalCost, @RequestParam String type) {
+        int result = billService.createBill(patientID, totalCost, type);
         if (result > 0) {
-            return ResponseEntity.status(201).body(bill);  // 201 Created
+            Bill createdBill = new Bill();
+            createdBill.setPatientID(patientID);
+            createdBill.setTotalCost(totalCost);
+            createdBill.setType(type);
+            createdBill.setStatus(0); // Default status
+            return ResponseEntity.status(201).body(createdBill);  // 201 Created
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("patient/{patientID}")
-    public List<Bill> getBillbyPatientID(@PathVariable int patientID){
-        return billService.getgetBillByPatientID(patientID);
+    // Get bills by patient ID
+    @GetMapping("/patient/{patientID}")
+    public List<Bill> getBillByPatientID(@PathVariable int patientID) {
+        return billService.getBillByPatientID(patientID);
     }
 
-    @PutMapping("/{billID}")
-    public ResponseEntity<Bill> updateBill(@PathVariable int billID, @RequestBody Bill bill) {
-        int result = billService.updateBill(billID, bill);
+    // Get bills with status1
+    @GetMapping("/status1")
+    public List<Bill> getBillByStatus1() {
+        return billService.getBillByStatus1();
+    }
+
+    // 3) Update the status of a bill
+    @PatchMapping("/{billID}/status")
+    public ResponseEntity<Void> updateBillStatus(@PathVariable int billID, @RequestParam int status) {
+        System.out.println("Entering updateBillStatus method"); // Add this line for debugging
+        System.out.println("Bill ID: " + billID + ", Status: " + status);
+
+        int result = billService.updateBillStatus(billID, status);
+        System.out.println(result);
         if (result > 0) {
-            return ResponseEntity.ok(bill);
+            return ResponseEntity.noContent().build(); // 204 No Content
         }
         return ResponseEntity.notFound().build();
     }
 
+    // 2) Delete a bill
     @DeleteMapping("/{billID}")
     public ResponseEntity<Void> deleteBill(@PathVariable int billID) {
         int result = billService.deleteBill(billID);
@@ -57,5 +78,14 @@ public class BillController {
             return ResponseEntity.noContent().build();  // 204 No Content
         }
         return ResponseEntity.notFound().build();
+    }
+
+
+
+
+    // Get unpaid bills by patient ID
+    @GetMapping("/patient/{patientID}/unpaid")
+    public List<Bill> getUnpaidBillsByPatientID(@PathVariable int patientID) {
+        return billService.getBillByPatientID_unpaid_ones(patientID);
     }
 }
