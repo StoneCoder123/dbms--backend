@@ -4,6 +4,7 @@ import com.proj.mideval.model.Appointment;
 import com.proj.mideval.model.GrantAppointmentRequest;
 import com.proj.mideval.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +29,21 @@ public class AppointmentController {
         }
     }
 
+    // Doctor grants an appointment request, creates a bill
     @PutMapping("/doctor/{doctorID}/grant")
-    public String grantAppointment(@RequestBody GrantAppointmentRequest request) {
-        int result = appointmentService.grantAppointment(request.getAppointmentID(), request.getAppointmentTime(), request.getCost());
+    public ResponseEntity<String> grantAppointment(@RequestBody GrantAppointmentRequest request) {
+        int result = appointmentService.grantAppointmentRequest(
+                request.getAppointmentID(),
+                request.getAppointmentTime(),
+                request.getPatientID(),
+                request.getTotalCost(),
+                request.getType()
+        );
+
         if (result > 0) {
-            return "Appointment successfully granted.";
+            return ResponseEntity.ok("Appointment successfully granted and bill created.");
         } else {
-            return "Failed to grant appointment.";
+            return ResponseEntity.badRequest().body("Failed to grant appointment.");
         }
     }
 
@@ -73,10 +82,59 @@ public class AppointmentController {
         return ResponseEntity.ok(appointments);
     }
 
+    // Get upcoming appointments of a doctor with Bill status 1
+     @GetMapping("/doctor/{doctorID}/upcoming/billStatus1")
+    public ResponseEntity<List<Appointment>> getUpcomingAppointmentsForDoctorWithBillIdStatus1(@PathVariable int doctorID) {
+        List<Appointment> appointments = appointmentService.getUpcomingAppointmentsForDoctorWithBillIdStatus1(doctorID);
+        return ResponseEntity.ok(appointments);
+    }
+
     // Get requested appointments of a doctor
     @GetMapping("/doctor/{doctorID}/requested")
     public ResponseEntity<List<Appointment>> getRequestedAppointmentsForDoctor(@PathVariable int doctorID) {
         List<Appointment> appointments = appointmentService.getRequestedAppointmentsForDoctor(doctorID);
         return ResponseEntity.ok(appointments);
     }
+
+
+    // Update the time of an appointment
+    @PutMapping("/{appointmentID}/update-time")
+    public ResponseEntity<String> updateAppointmentTime(@PathVariable int appointmentID, @RequestParam Date newTime) {
+        int result = appointmentService.updateAppointmentTime(appointmentID, newTime);
+        if (result > 0) {
+            return ResponseEntity.ok("Appointment time successfully updated.");
+        } else {
+            return ResponseEntity.badRequest().body("Failed to update appointment time. Ensure the new time is in the future.");
+        }
+    }
+
+
+    // Delete an appointment (to be done by the patient)
+    @DeleteMapping("/{appointmentID}/delete")
+    public ResponseEntity<String> deleteAppointment(@PathVariable int appointmentID) {
+        int result = appointmentService.deleteAppointment(appointmentID);
+
+        if (result > 0) {
+//            System.out.println(appointmentID);
+            return ResponseEntity.ok("Appointment successfully deleted.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found or could not be deleted.");
+        }
+    }
+
+
+
+    // Update prescription for an appointment
+    @PutMapping("/{appointmentID}/update-prescription")
+    public ResponseEntity<String> updateAppointmentPrescription(@PathVariable int appointmentID, @RequestParam String prescription) {
+        int result = appointmentService.updateAppointmentPrescription(appointmentID, prescription);
+        if (result > 0) {
+            return ResponseEntity.ok("Prescription successfully updated.");
+        } else {
+            return ResponseEntity.badRequest().body("Failed to update prescription. Ensure the appointment ID is valid.");
+        }
+    }
+
+
+
 }
