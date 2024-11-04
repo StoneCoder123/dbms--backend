@@ -11,23 +11,18 @@ public class GrantAppointmentRequest {
     public int getAppointmentID() {
         return appointmentID;
     }
-
     public void setAppointmentID(int appointmentID) {
         this.appointmentID = appointmentID;
     }
-
     public Date getAppointmentTime() {
         return appointmentTime;
     }
-
     public void setAppointmentTime(Date appointmentTime) {
         this.appointmentTime = appointmentTime;
     }
-
     public int getCost() {
         return cost;
     }
-
     public void setCost(int cost) {
         this.cost = cost;
     }
