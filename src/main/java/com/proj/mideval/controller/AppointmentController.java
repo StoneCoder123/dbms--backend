@@ -1,6 +1,7 @@
 package com.proj.mideval.controller;
 
 import com.proj.mideval.model.Appointment;
+import com.proj.mideval.model.GrantAppointmentRequest;
 import com.proj.mideval.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +28,9 @@ public class AppointmentController {
         }
     }
 
-    // Doctor grants an appointment by setting the time and updating the status
     @PutMapping("/doctor/{doctorID}/grant")
-    public String grantAppointment(@RequestParam int appointmentID, @RequestParam Date appointmentTime) {
-        int result = appointmentService.grantAppointment(appointmentID, appointmentTime);
+    public String grantAppointment(@RequestBody GrantAppointmentRequest request) {
+        int result = appointmentService.grantAppointment(request.getAppointmentID(), request.getAppointmentTime(), request.getCost());
         if (result > 0) {
             return "Appointment successfully granted.";
         } else {
