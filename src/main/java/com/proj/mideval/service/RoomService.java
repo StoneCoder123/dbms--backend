@@ -30,14 +30,14 @@ public class RoomService {
 
     // Method to create a new Room record
     public int createRoom(Room room) {
-        String sql = "INSERT INTO Room (RoomID, RoomType, Cost, PatientID) VALUES (?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, room.getRoomID(), room.getRoomType(), room.getCost(), room.getPatientID());
+        String sql = "INSERT INTO Room (RoomType, Cost) VALUES (?, ?)";
+        return jdbcTemplate.update(sql, room.getRoomType(), room.getCost());
     }
 
     // Method to update an existing Room record
     public int updateRoom(int roomID, Room room) {
-        String sql = "UPDATE Room SET RoomType = ?, Cost = ?, PatientID = ? WHERE RoomID = ?";
-        return jdbcTemplate.update(sql, room.getRoomType(), room.getCost(), room.getPatientID(), roomID);
+        String sql = "UPDATE Room SET RoomType = ?, Cost = ? WHERE RoomID = ?";
+        return jdbcTemplate.update(sql, room.getRoomType(), room.getCost(), roomID);
     }
 
     // Method to delete a Room record
@@ -52,7 +52,6 @@ public class RoomService {
         room.setRoomID(rs.getInt("RoomID"));
         room.setRoomType(rs.getString("RoomType"));
         room.setCost(rs.getInt("Cost"));
-        room.setPatientID(rs.getInt("PatientID"));
         return room;
     }
 }
