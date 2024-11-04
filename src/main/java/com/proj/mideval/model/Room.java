@@ -23,5 +23,4 @@ public class Room {
 
     public int getCost() { return cost; }
     public void setCost(int cost) { this.cost = cost; }
-
 }
