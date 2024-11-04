@@ -64,11 +64,19 @@ Status INT DEFAULT 0,
 TYPE Varchar(100)
 );
 
+CREATE TABLE RoomBooking(
+RoomBookingID INT PRIMARY KEY auto_increment,
+RoomID INT REFERENCES Room(RoomID),
+PatientID INT REFERENCES Patient(PatientID),
+BookFrom DATE NOT NULL,
+BookTill DATE NOT NULL, 
+NumDays INT DEFAULT 0
+);
+
 CREATE TABLE Room(
 RoomID INT PRIMARY KEY auto_increment,
 RoomType VARCHAR(50),
 Cost INT,
-PatientID INT REFERENCES Patient(PatientID)
 );
 
 CREATE TABLE Billing_department(
@@ -77,6 +85,20 @@ Name VARCHAR(100),
 Phone VARCHAR(15),
 Email VARCHAR(80),
 BillID INT REFERENCES Bill(BillID)
+);
+
+CREATE TABLE TakesDoctorSal(
+DsID INT PRIMARY KEY auto_increment,
+DoctorID INT REFERENCES Doctor(DoctorID),
+Salary INT,
+IssueDate DATE NOT NULL
+);
+
+CREATE TABLE TakesChemistSal(
+CsID INT PRIMARY KEY auto_increment,
+ChemistID INT REFERENCES Chemist(ChemistID),
+Salary INT,
+IssueDate DATE NOT NULL
 );
 
 
@@ -93,6 +115,17 @@ MachineID INT PRIMARY KEY auto_increment,
 Name VARCHAR(50) NOT NULL,
 Cost INT
 );
+
+CREATE TABLE MedicineRequests(
+RequestID INT PRIMARY KEY auto_increment,
+MedicineID INT ,
+MedicineName VARCHAR(50) NOT NULL,
+Cost INT,
+Type VARCHAR(50),
+CompanyName VARCHAR(50), 
+Amount INT DEFAULT 0
+);
+
 
 CREATE TABLE Medicines(
 MedicineID INT PRIMARY KEY auto_increment,
