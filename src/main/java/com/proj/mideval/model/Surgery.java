@@ -1,23 +1,27 @@
 package com.proj.mideval.model;
 
+import java.time.LocalDateTime;
+
 public class Surgery {
     private int surgeryID;
     private int patientID;
     private int doctorID;
+    private int billID;
     private String type;
     private int criticalLevel;
-    private int cost;
+    private LocalDateTime time;
 
     // Constructors
     public Surgery() {}
 
-    public Surgery(int surgeryID, int patientID, int doctorID, String type, int criticalLevel, int cost) {
+    public Surgery(int surgeryID, int patientID, int doctorID, int billID, String type, int criticalLevel, LocalDateTime time) {
         this.surgeryID = surgeryID;
         this.patientID = patientID;
         this.doctorID = doctorID;
+        this.billID = billID;
         this.type = type;
         this.criticalLevel = criticalLevel;
-        this.cost = cost;
+        this.time = time;
     }
 
     // Getters and Setters
@@ -30,18 +34,15 @@ public class Surgery {
     public int getDoctorID() { return doctorID; }
     public void setDoctorID(int doctorID) { this.doctorID = doctorID; }
 
+    public int getBillID() { return billID; }
+    public void setBillID(int billID) { this.billID = billID; }
+
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
     public int getCriticalLevel() { return criticalLevel; }
     public void setCriticalLevel(int criticalLevel) { this.criticalLevel = criticalLevel; }
 
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
+    public LocalDateTime getTime() { return time; }
+    public void setTime(LocalDateTime time) { this.time = time; }
 }
-

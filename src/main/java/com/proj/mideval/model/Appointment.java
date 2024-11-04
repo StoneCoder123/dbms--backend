@@ -8,18 +8,20 @@ public class Appointment {
     private int doctorID;
     private Date time;
     private int status;
-    private int cost;// 0 = requested, 1 = granted
+    private Integer billID; // Bill ID can be null, so we use Integer
+    private String prescription; // Prescription as a string to hold up to 500 characters
 
     // Constructors
     public Appointment() {}
 
-    public Appointment(int appointmentID, int patientID, int doctorID, Date time, int status, int cost) {
+    public Appointment(int appointmentID, int patientID, int doctorID, Date time, int status, Integer billID, String prescription) {
         this.appointmentID = appointmentID;
         this.patientID = patientID;
         this.doctorID = doctorID;
         this.time = time;
         this.status = status;
-        this.cost = cost;
+        this.billID = billID;
+        this.prescription = prescription;
     }
 
     // Getters and Setters
@@ -38,12 +40,9 @@ public class Appointment {
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
 
-    public int getCost() {
-        return cost;
-    }
+    public Integer getBillID() { return billID; }
+    public void setBillID(Integer billID) { this.billID = billID; }
 
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
+    public String getPrescription() { return prescription; }
+    public void setPrescription(String prescription) { this.prescription = prescription; }
 }
-
