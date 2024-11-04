@@ -45,6 +45,7 @@ public class MedicinesController {
         return ResponseEntity.notFound().build();
     }
 
+
     @DeleteMapping("/{medicineID}")
     public ResponseEntity<Void> deleteMedicines(@PathVariable int medicineID) {
         int result = medicinesService.deleteMedicines(medicineID);
