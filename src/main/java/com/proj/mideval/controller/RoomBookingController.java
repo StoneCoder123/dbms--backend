@@ -29,6 +29,11 @@ public class RoomBookingController {
         return roomBooking.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @GetMapping("/patient/{id}")
+    public ResponseEntity<List<RoomBooking>> getRoomBookingByPatientID(@PathVariable int id) {
+        List<RoomBooking> roomBookings = roomBookingService.getRoomBookingByPatientID(id);
+        return new ResponseEntity<>(roomBookings, HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<RoomBooking> createRoomBooking(@RequestBody RoomBooking roomBooking) {
