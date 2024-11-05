@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("/appointments")
@@ -99,8 +102,18 @@ public class AppointmentController {
 
     // Update the time of an appointment
     @PutMapping("/{appointmentID}/update-time")
-    public ResponseEntity<String> updateAppointmentTime(@PathVariable int appointmentID, @RequestParam Date newTime) {
-        int result = appointmentService.updateAppointmentTime(appointmentID, newTime);
+    public ResponseEntity<String> updateAppointmentTime(@PathVariable int appointmentID, @RequestParam String newTime) {
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date parsedDate;
+
+        try {
+            parsedDate = isoFormat.parse(newTime);
+        } catch (ParseException e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Please use ISO 8601 format.");
+        }
+
+        int result = appointmentService.updateAppointmentTime(appointmentID, parsedDate);
         if (result > 0) {
             return ResponseEntity.ok("Appointment time successfully updated.");
         } else {
