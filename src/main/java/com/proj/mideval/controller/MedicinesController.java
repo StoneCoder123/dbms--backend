@@ -1,6 +1,7 @@
 package com.proj.mideval.controller;
 
 import com.proj.mideval.model.Medicines;
+import com.proj.mideval.model.Patient;
 import com.proj.mideval.service.MedicinesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,10 @@ public class MedicinesController {
         return medicines.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/medicine-id")
+    public Integer getMedicineIDByName(@RequestParam String name) {
+        return medicinesService.getMedicineIDByName(name);
+    }
     @PostMapping
     public ResponseEntity<Medicines> createMedicines(@RequestBody Medicines medicines) {
         int result = medicinesService.createMedicines(medicines);
