@@ -1,13 +1,15 @@
+
 package com.proj.mideval.service;
 
 import com.proj.mideval.model.Surgery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.sql.*;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,51 +19,53 @@ public class SurgeryService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // Retrieve all Surgery records
+    @Autowired
+    private BillService billService;
+
+    // Retrieve all Surgery records (accessible to doctor and patient)
     public List<Surgery> getAllSurgeries() {
         String sql = "SELECT * FROM Surgery";
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToSurgery(rs));
     }
 
-    // Retrieve a Surgery record by surgeryID
+    // Retrieve a Surgery record by surgeryID (accessible to doctor and patient)
     public Optional<Surgery> getSurgeryById(int surgeryID) {
         String sql = "SELECT * FROM Surgery WHERE surgeryID = ?";
         return jdbcTemplate.query(sql, new Object[]{surgeryID}, (rs, rowNum) -> mapRowToSurgery(rs)).stream().findFirst();
     }
 
-    // Retrieve all Surgery records by doctorID
+    // Retrieve all Surgery records by doctorID (visible to doctor)
     public List<Surgery> getSurgeryByDoctorID(int doctorID) {
         String sql = "SELECT * FROM Surgery WHERE doctorID = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorID}, (rs, rowNum) -> mapRowToSurgery(rs));
     }
 
-    // Retrieve all Surgery records by patientID
+    // Retrieve all Surgery records by patientID (visible to patient)
     public List<Surgery> getSurgeryByPatientID(int patientID) {
         String sql = "SELECT * FROM Surgery WHERE patientID = ?";
         return jdbcTemplate.query(sql, new Object[]{patientID}, (rs, rowNum) -> mapRowToSurgery(rs));
     }
 
-    // Create a new Surgery record with a generated BillID
-    public int createSurgery(Surgery surgery) {
-        int billID = createBillForSurgery(surgery);  // Assume this creates a new bill and returns the billID
-        String sql = "INSERT INTO Surgery (patientID, doctorID, billID, type, criticalLevel, time) VALUES (?, ?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, surgery.getPatientID(), surgery.getDoctorID(), billID, surgery.getType(), surgery.getCriticalLevel(), surgery.getTime());
-    }
+    // Create a new Surgery record with an associated Bill created instantly
+    public int createSurgery(int patientID, int doctorID, int totalCost, int criticalLevel, Date time) {
+        // First, create a bill with type "Surgery"
+        int billID = billService.createBill(patientID, totalCost, "Surgery");
 
-    // Helper method to create a bill for the surgery (assuming Bill table has been defined)
-    private int createBillForSurgery(Surgery surgery) {
-        String sql = "INSERT INTO Bill (amount, dateCreated) VALUES (?, ?)";
-        jdbcTemplate.update(sql, calculateSurgeryCost(surgery), LocalDateTime.now());
+        // SQL query to insert a new surgery record
+        String sql = "INSERT INTO Surgery (PatientID, DoctorID, BillID, Type, CriticalLevel, Time) VALUES (?, ?, ?, 'Surgery', ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        // Retrieve the generated BillID
-        String getBillIdSql = "SELECT LAST_INSERT_ID()";
-        return jdbcTemplate.queryForObject(getBillIdSql, Integer.class);
-    }
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, patientID);
+            ps.setInt(2, doctorID);
+            ps.setInt(3, billID);  // Use the generated bill ID
+            ps.setInt(4, criticalLevel);
+            ps.setTimestamp(5, new Timestamp(time.getTime()));  // Convert Date to SQL Timestamp
+            return ps;
+        }, keyHolder);
 
-    // Calculate surgery cost (you can define the logic as needed)
-    private int calculateSurgeryCost(Surgery surgery) {
-        // Placeholder for cost calculation based on type, criticalLevel, etc.
-        return 1000;  // Example static cost, adjust as necessary
+        return keyHolder.getKey().intValue(); // Return the generated surgery ID
     }
 
     // Delete a Surgery record by doctorID and surgeryID
@@ -71,9 +75,17 @@ public class SurgeryService {
     }
 
     // Reschedule Surgery by doctorID
-    public int rescheduleSurgery(int surgeryID, int doctorID, LocalDateTime newTime) {
+    public int rescheduleSurgery(int surgeryID, int doctorID, Date newTime) {
         String sql = "UPDATE Surgery SET time = ? WHERE surgeryID = ? AND doctorID = ?";
-        return jdbcTemplate.update(sql, newTime, surgeryID, doctorID);
+        return jdbcTemplate.update(sql, new Timestamp(newTime.getTime()), surgeryID, doctorID);
+    }
+
+    // Calculate surgery cost (adjust logic as needed)
+    private int calculateSurgeryCost(Surgery surgery) {
+        // Basic cost calculation based on type and criticalLevel, modify as needed
+        int baseCost = 1000;
+        int criticalMultiplier = surgery.getCriticalLevel() * 200;
+        return baseCost + criticalMultiplier;
     }
 
     // Map a ResultSet row to a Surgery object
@@ -85,7 +97,8 @@ public class SurgeryService {
         surgery.setBillID(rs.getInt("billID"));
         surgery.setType(rs.getString("type"));
         surgery.setCriticalLevel(rs.getInt("criticalLevel"));
-        surgery.setTime(rs.getTimestamp("time").toLocalDateTime());
+        surgery.setTime(rs.getTimestamp("time"));  // Directly use Timestamp as Date
         return surgery;
     }
 }
+
