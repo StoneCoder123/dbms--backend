@@ -1,72 +1,106 @@
+
 package com.proj.mideval.controller;
 
 import com.proj.mideval.model.Surgery;
+import com.proj.mideval.model.SurgeryRequest;
 import com.proj.mideval.service.SurgeryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/surgery")
+@RequestMapping("/surgeries")
 public class SurgeryController {
 
     @Autowired
     private SurgeryService surgeryService;
 
-    // Retrieve all surgeries
+    // Retrieve all Surgery records
     @GetMapping
     public List<Surgery> getAllSurgeries() {
         return surgeryService.getAllSurgeries();
     }
 
-    // Retrieve a surgery by surgeryID
+    // Retrieve a Surgery record by surgeryID
     @GetMapping("/{surgeryID}")
     public ResponseEntity<Surgery> getSurgeryById(@PathVariable int surgeryID) {
         Optional<Surgery> surgery = surgeryService.getSurgeryById(surgeryID);
-        return surgery.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return surgery.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Create a new surgery by doctor
-    @PostMapping("/{doctorId}")
-    public ResponseEntity<Surgery> createSurgery(@PathVariable int doctorId, @RequestBody Surgery surgery) {
-        surgery.setDoctorID(doctorId); // Set doctorID from the path variable
-        int result = surgeryService.createSurgery(surgery);
-        if (result > 0) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(surgery); // 201 Created
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
-    // Delete a surgery by doctor
-    @DeleteMapping("/{doctorId}/{surgeryID}")
-    public ResponseEntity<Void> deleteSurgery(@PathVariable int surgeryID, @PathVariable int doctorId) {
-        int result = surgeryService.deleteSurgeryByDoctor(surgeryID, doctorId);
-        if (result > 0) {
-            return ResponseEntity.noContent().build(); // 204 No Content
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    // Endpoint to get all surgeries for a specific doctor
+    // Retrieve all Surgery records by doctorID
     @GetMapping("/doctor/{doctorID}")
-    public List<Surgery> getSurgeriesByDoctorId(@PathVariable int doctorID) {
+    public List<Surgery> getSurgeriesByDoctorID(@PathVariable int doctorID) {
         return surgeryService.getSurgeryByDoctorID(doctorID);
     }
 
-    // Reschedule a surgery by doctor
-    @PutMapping("/{doctorId}/{surgeryID}/reschedule")
-    public ResponseEntity<Surgery> rescheduleSurgery(@PathVariable int surgeryID,
-                                                     @PathVariable int doctorId,
-                                                     @RequestBody Surgery surgery) {
-        int result = surgeryService.rescheduleSurgery(surgeryID, doctorId, surgery.getTime());
-        if (result > 0) {
-            return ResponseEntity.ok(surgery); // 200 OK
-        }
-        return ResponseEntity.notFound().build();
+    // Retrieve all Surgery records by patientID
+    @GetMapping("/patient/{patientID}")
+    public List<Surgery> getSurgeriesByPatientID(@PathVariable int patientID) {
+        return surgeryService.getSurgeryByPatientID(patientID);
     }
+
+//    // Create a new Surgery record
+//    @PostMapping
+//    public ResponseEntity<Integer> createSurgery(
+//            @RequestParam int patientID,
+//            @RequestParam int doctorID,
+//            @RequestParam int totalCost,
+//            @RequestParam int criticalLevel,
+//            @RequestParam Date time) {
+//        int surgeryID = surgeryService.createSurgery(patientID, doctorID, totalCost, criticalLevel, time);
+//        return ResponseEntity.ok(surgeryID);
+//    }
+
+
+    @PostMapping
+    public ResponseEntity<Integer> createSurgery(@RequestBody SurgeryRequest surgeryRequest) {
+        int surgeryID = surgeryService.createSurgery(
+                surgeryRequest.getPatientID(),
+                surgeryRequest.getDoctorID(),
+                surgeryRequest.getTotalCost(),
+                surgeryRequest.getCriticalLevel(),
+                surgeryRequest.getTime()
+        );
+        return ResponseEntity.ok(surgeryID);
+    }
+
+
+
+    // Delete a Surgery record by doctorID and surgeryID
+    @DeleteMapping("/{surgeryID}/doctor/{doctorID}")
+    public ResponseEntity<Void> deleteSurgeryByDoctor(@PathVariable int surgeryID, @PathVariable int doctorID) {
+        int rowsAffected = surgeryService.deleteSurgeryByDoctor(surgeryID, doctorID);
+        return rowsAffected > 0 ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+//    // Reschedule a Surgery by doctorID and surgeryID
+//    @PutMapping("/{surgeryID}/doctor/{doctorID}")
+//    public ResponseEntity<Void> rescheduleSurgery(
+//            @PathVariable int surgeryID,
+//            @PathVariable int doctorID,
+//            @RequestParam Date newTime) {
+//        int rowsAffected = surgeryService.rescheduleSurgery(surgeryID, doctorID, newTime);
+//        return rowsAffected > 0 ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+//    }
+
+
+    // Reschedule a Surgery by doctorID and surgeryID
+    @PutMapping("/{surgeryID}/doctor/{doctorID}")
+    public ResponseEntity<Void> rescheduleSurgery(
+            @PathVariable int surgeryID,
+            @PathVariable int doctorID,
+            @RequestBody SurgeryRequest surgeryRequest) {
+
+        // Get the new time from the DTO
+        Date newTime = surgeryRequest.getTime(); // Assuming you have a 'getTime' method in the DTO
+
+        int rowsAffected = surgeryService.rescheduleSurgery(surgeryID, doctorID, newTime);
+        return rowsAffected > 0 ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
 }

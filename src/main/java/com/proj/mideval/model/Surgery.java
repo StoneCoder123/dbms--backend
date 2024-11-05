@@ -1,6 +1,7 @@
+
 package com.proj.mideval.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Surgery {
     private int surgeryID;
@@ -9,12 +10,12 @@ public class Surgery {
     private int billID;
     private String type;
     private int criticalLevel;
-    private LocalDateTime time;
+    private Date time;  // Changed from LocalDateTime to Date
 
     // Constructors
     public Surgery() {}
 
-    public Surgery(int surgeryID, int patientID, int doctorID, int billID, String type, int criticalLevel, LocalDateTime time) {
+    public Surgery(int surgeryID, int patientID, int doctorID, int billID, String type, int criticalLevel, Date time) {
         this.surgeryID = surgeryID;
         this.patientID = patientID;
         this.doctorID = doctorID;
@@ -43,6 +44,7 @@ public class Surgery {
     public int getCriticalLevel() { return criticalLevel; }
     public void setCriticalLevel(int criticalLevel) { this.criticalLevel = criticalLevel; }
 
-    public LocalDateTime getTime() { return time; }
-    public void setTime(LocalDateTime time) { this.time = time; }
+    public Date getTime() { return time; }  // Updated return type to Date
+    public void setTime(Date time) { this.time = time; }  // Updated parameter type to Date
 }
+
