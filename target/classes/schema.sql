@@ -59,14 +59,24 @@ Password VARCHAR(255)
 CREATE TABLE Bill(
 BillID INT PRIMARY KEY auto_increment,
 PatientID INT References Patient(PatientID),
-TotalCost INT
+TotalCost INT,
+Status INT DEFAULT 0,
+TYPE Varchar(100)
+);
+
+CREATE TABLE RoomBooking(
+RoomBookingID INT PRIMARY KEY auto_increment,
+RoomID INT REFERENCES Room(RoomID),
+PatientID INT REFERENCES Patient(PatientID),
+BookFrom DATE NOT NULL,
+BookTill DATE NOT NULL, 
+NumDays INT DEFAULT 0
 );
 
 CREATE TABLE Room(
 RoomID INT PRIMARY KEY auto_increment,
 RoomType VARCHAR(50),
 Cost INT,
-PatientID INT REFERENCES Patient(PatientID)
 );
 
 CREATE TABLE Billing_department(
@@ -75,6 +85,20 @@ Name VARCHAR(100),
 Phone VARCHAR(15),
 Email VARCHAR(80),
 BillID INT REFERENCES Bill(BillID)
+);
+
+CREATE TABLE TakesDoctorSal(
+DsID INT PRIMARY KEY auto_increment,
+DoctorID INT REFERENCES Doctor(DoctorID),
+Salary INT,
+IssueDate DATE NOT NULL
+);
+
+CREATE TABLE TakesChemistSal(
+CsID INT PRIMARY KEY auto_increment,
+ChemistID INT REFERENCES Chemist(ChemistID),
+Salary INT,
+IssueDate DATE NOT NULL
 );
 
 
@@ -92,6 +116,17 @@ Name VARCHAR(50) NOT NULL,
 Cost INT
 );
 
+CREATE TABLE MedicineRequests(
+RequestID INT PRIMARY KEY auto_increment,
+MedicineID INT ,
+MedicineName VARCHAR(50) NOT NULL,
+Cost INT,
+Type VARCHAR(50),
+CompanyName VARCHAR(50), 
+Amount INT DEFAULT 0
+);
+
+
 CREATE TABLE Medicines(
 MedicineID INT PRIMARY KEY auto_increment,
 MedicineName VARCHAR(50) NOT NULL,
@@ -104,9 +139,10 @@ CREATE TABLE Surgery(
 SurgeryID INT PRIMARY KEY auto_increment,
 PatientID INT REFERENCES Patient(PatientID),
 DoctorID INT REFERENCES Doctor(DoctorID),
+BillID INT REFERENCES Bill(BillID),
 Type VARCHAR(30),
 CriticalLevel INT NOT NULL,
-Cost INT DEFAULT 0
+Time DATETIME DEFAULT NULL
 );
 
 CREATE TABLE Helps_In(
@@ -229,9 +265,11 @@ CREATE TABLE appointments (
     doctorID INT NOT NULL,
     time DATETIME DEFAULT NULL,
     status INT NOT NULL,
+    billID INT DEFAULT NULL,
+    prescription VARCHAR(500),
     FOREIGN KEY (patientID) REFERENCES patient(patientID),
-    FOREIGN KEY (doctorID) REFERENCES doctor(doctorID), 
-    Cost INT DEFAULT 0
+    FOREIGN KEY (doctorID) REFERENCES doctor(doctorID),
+    FOREIGN KEY (billID) references bill(billID)
 );
 
 
@@ -239,21 +277,21 @@ CREATE TABLE appointments (
 
 DELIMITER $$
 
-create trigger surgeryBill
-after insert on Surgery
-for each row
-BEGIN
-	insert into BILL(PatientID, TotalCost) value
-    (new.PatientID, new.Cost);
-END $$
+-- create trigger surgeryBill
+-- after insert on Surgery
+-- for each row
+-- BEGIN
+-- 	insert into BILL(PatientID, TotalCost) value
+--     (new.PatientID, new.Cost);
+-- END $$
 
-create trigger appointmentBill
-after insert on appointments
-for each row
-BEGIN
-	insert into BILL(PatientID, TotalCost) value
-    (new.PatientID, new.Cost);
-END $$
+-- create trigger appointmentBill
+-- after insert on appointments
+-- for each row
+-- BEGIN
+-- 	insert into BILL(PatientID, TotalCost) value
+--     (new.PatientID, new.Cost);
+-- END $$
 
 
 CREATE TRIGGER before_insert_doctor
@@ -281,3 +319,7 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+
+
