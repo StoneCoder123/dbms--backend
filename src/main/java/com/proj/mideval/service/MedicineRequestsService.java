@@ -1,5 +1,6 @@
 package com.proj.mideval.service;
 
+import com.proj.mideval.model.Bill;
 import com.proj.mideval.model.MedicineRequests;
 import com.proj.mideval.model.Medicines;
 import org.slf4j.Logger;
@@ -44,6 +45,8 @@ public class MedicineRequestsService {
         });
     }
 
+
+
     public boolean acceptRequest(int requestID) {
         String sql = "SELECT * FROM MedicineRequests WHERE RequestID = ?";
         MedicineRequests request = jdbcTemplate.queryForObject(sql, new Object[]{requestID}, (rs, rowNum) -> {
@@ -58,15 +61,16 @@ public class MedicineRequestsService {
             return req;
         });
 
-        logger.info("Attempting to add request with ID: {}", request.getMedicineID());
+        int id = medicinesService.getMedicineIDByName(request.getMedicineName());
+        logger.info("Attempting to add request with ID: {}", id);
 
-        if (request.getMedicineID() != 0) {
-            Optional<Medicines> optionalMedicine = medicinesService.getMedicinesById(request.getMedicineID());
+        if (id != 0) {
+            Optional<Medicines> optionalMedicine = medicinesService.getMedicinesById(id);
             if (optionalMedicine.isPresent()) {
                 logger.info("medicine exists");
                 Medicines existingMedicine = optionalMedicine.get();
                 existingMedicine.setAmount(existingMedicine.getAmount() + request.getAmount());
-                medicinesService.updateMedicines(request.getMedicineID(), existingMedicine);
+                medicinesService.updateMedicines(id, existingMedicine);
             }
         } else {
             Medicines newMedicine = new Medicines();

@@ -1,6 +1,7 @@
 package com.proj.mideval.controller;
 
 import com.proj.mideval.model.RoomBooking;
+import com.proj.mideval.model.RoomBookingRequest;
 import com.proj.mideval.service.RoomBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ public class RoomBookingController {
 
     @Autowired
     private RoomBookingService roomBookingService;
+
 
     @GetMapping
     public ResponseEntity<List<RoomBooking>> getAllRoomBookings() {
@@ -36,17 +38,21 @@ public class RoomBookingController {
     }
 
     @PostMapping
-    public ResponseEntity<RoomBooking> createRoomBooking(@RequestBody RoomBooking roomBooking) {
-        RoomBooking newRoomBooking = roomBookingService.createRoomBooking(roomBooking);
-        return new ResponseEntity<>(newRoomBooking, HttpStatus.CREATED);
+    public ResponseEntity<Integer> createRoomBooking(@RequestBody RoomBookingRequest roomBookingRequest) {
+        int roomBookingID = roomBookingService.createRoomBooking(roomBookingRequest);
+        return ResponseEntity.ok(roomBookingID);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<RoomBooking> updateRoomBooking(@PathVariable int id, @RequestBody RoomBooking roomBookingDetails) {
-        Optional<RoomBooking> updatedRoomBooking = roomBookingService.updateRoomBooking(id, roomBookingDetails);
-        return updatedRoomBooking.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+    @PutMapping("/{roomBookingID}")
+    public ResponseEntity<Void> updateRoomBooking(
+            @PathVariable int roomBookingID,
+            @RequestBody RoomBookingRequest roomBookingRequest) {
+
+        int rowsAffected = roomBookingService.updateRoomBooking(roomBookingID, roomBookingRequest);
+        return rowsAffected > 0 ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoomBooking(@PathVariable int id) {
