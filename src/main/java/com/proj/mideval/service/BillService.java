@@ -64,6 +64,12 @@ public class BillService {
         String sql = "UPDATE Bill SET Status = ? WHERE BillID = ?";
         return jdbcTemplate.update(sql, status, billID);
     }
+    // 3) Update the status of a bill
+    public int updateBill(int billID, int cost) {
+        System.out.println("Updating status in database");
+        String sql = "UPDATE Bill SET TotalCost = ? WHERE BillID = ?";
+        return jdbcTemplate.update(sql, cost, billID);
+    }
 
     // 4) Update mapRowToBill to handle new attributes
     private Bill mapRowToBill(ResultSet rs) throws SQLException {
