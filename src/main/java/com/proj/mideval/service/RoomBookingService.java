@@ -25,6 +25,7 @@ public class RoomBookingService {
     @Autowired
     private BillService billService;
 
+
     private final RowMapper<RoomBooking> roomBookingRowMapper = new RowMapper<RoomBooking>() {
         @Override
         public RoomBooking mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -34,6 +35,7 @@ public class RoomBookingService {
             roomBooking.setPatientID(rs.getInt("PatientID"));
             roomBooking.setBookFrom(rs.getDate("BookFrom"));
             roomBooking.setBookTill(rs.getDate("BookTill"));
+            roomBooking.setBillID(rs.getInt("BillID"));
             roomBooking.setNumDays(rs.getInt("NumDays"));
             return roomBooking;
         }
@@ -57,7 +59,7 @@ public class RoomBookingService {
     public int createRoomBooking(RoomBookingRequest roomBookingRequest) {
         // First, create a bill with type "RoomBooking"
         int billID = billService.createBill(roomBookingRequest.getPatientID(), roomBookingRequest.getTotalCost(), "RoomBooking");
-
+        System.out.println(billID);
         // SQL query to insert a new RoomBooking record
         String sql = "INSERT INTO RoomBooking (RoomID, PatientID, BookFrom, BookTill, NumDays, BillID) VALUES (?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
