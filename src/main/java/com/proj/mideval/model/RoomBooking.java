@@ -9,16 +9,18 @@ public class RoomBooking {
     private int patientID;
     private Date bookFrom;
     private Date bookTill;
+    private int billID;
     private int numDays;
 
     public RoomBooking() {}
 
-    public RoomBooking(int roomBookingID, int roomID, int patientID, java.sql.Date bookFrom, java.sql.Date bookTill, int numDays) {
+    public RoomBooking(int roomBookingID, int roomID, int patientID, java.sql.Date bookFrom, java.sql.Date bookTill, int billID, int numDays) {
         this.roomBookingID = roomBookingID;
         this.roomID = roomID;
         this.patientID = patientID;
         this.bookFrom =  bookFrom;
         this.bookTill = bookTill;
+        this.billID = billID;
         this.numDays = numDays;
     }
 
@@ -60,6 +62,14 @@ public class RoomBooking {
 
     public void setBookTill(Date bookTill) {
         this.bookTill = bookTill;
+    }
+
+    public int getBillID() {
+        return billID;
+    }
+
+    public void setBillID(int billID) {
+        this.billID = billID;
     }
 
     public int getNumDays() {
