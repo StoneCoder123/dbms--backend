@@ -3,7 +3,6 @@ drop database hospital_db;
 -- Create the database
 CREATE DATABASE hospital_db;
 USE hospital_db;
-
 -- Create Doctor table
 CREATE TABLE Doctor (
     DoctorID INT PRIMARY KEY AUTO_INCREMENT,
@@ -177,4 +176,15 @@ CREATE TABLE appointments (
     FOREIGN KEY (patientID) REFERENCES Patient(PatientID) ON DELETE CASCADE,
     FOREIGN KEY (doctorID) REFERENCES Doctor(DoctorID) ON DELETE CASCADE,
     FOREIGN KEY (billID) REFERENCES Bill(BillID) ON DELETE SET NULL
+);
+CREATE TABLE MachineHiring (
+    HiringID INT PRIMARY KEY AUTO_INCREMENT,
+    DoctorID INT NOT NULL,
+    MachineID INT NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID) ON DELETE CASCADE,
+    FOREIGN KEY (MachineID) REFERENCES Machinery(MachineID) ON DELETE CASCADE,
+
+    CHECK (EndDate > StartDate)
 );

@@ -1,3 +1,5 @@
+drop database hospital_db;
+
 -- Create the database
 CREATE DATABASE hospital_db;
 USE hospital_db;
@@ -16,6 +18,7 @@ CREATE TABLE Doctor (
     Specialization VARCHAR(30),
     Password VARCHAR(255)
 );
+
 -- Create Patient table
 CREATE TABLE Patient (
     PatientID INT PRIMARY KEY AUTO_INCREMENT,
@@ -29,6 +32,7 @@ CREATE TABLE Patient (
     DOB DATE NOT NULL,
     Password VARCHAR(255)
 );
+
 -- Create Chemist table
 CREATE TABLE Chemist (
     ChemistID INT PRIMARY KEY AUTO_INCREMENT,
@@ -40,6 +44,7 @@ CREATE TABLE Chemist (
     Phone VARCHAR(15),
     Password VARCHAR(255)
 );
+
 -- Create Bill table
 CREATE TABLE Bill (
     BillID INT PRIMARY KEY AUTO_INCREMENT,
@@ -49,6 +54,7 @@ CREATE TABLE Bill (
     TYPE VARCHAR(100),
     FOREIGN KEY (PatientID) REFERENCES Patient(PatientID) ON DELETE CASCADE
 );
+
 -- Create TakesDoctorSal table
 CREATE TABLE TakesDoctorSal (
     DsID INT PRIMARY KEY AUTO_INCREMENT,
@@ -57,6 +63,7 @@ CREATE TABLE TakesDoctorSal (
     IssueDate DATE NOT NULL,
     FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID) ON DELETE CASCADE
 );
+
 -- Create TakesChemistSal table
 CREATE TABLE TakesChemistSal (
     CsID INT PRIMARY KEY AUTO_INCREMENT,
@@ -65,12 +72,14 @@ CREATE TABLE TakesChemistSal (
     IssueDate DATE NOT NULL,
     FOREIGN KEY (ChemistID) REFERENCES Chemist(ChemistID) ON DELETE CASCADE
 );
+
 -- Create Room table
 CREATE TABLE Room (
     RoomID INT PRIMARY KEY AUTO_INCREMENT,
     RoomType VARCHAR(50),
     Cost INT
 );
+
 -- Create RoomBooking table
 CREATE TABLE RoomBooking (
     RoomBookingID INT PRIMARY KEY AUTO_INCREMENT,
@@ -79,11 +88,10 @@ CREATE TABLE RoomBooking (
     BookFrom DATE NOT NULL,
     BookTill DATE NOT NULL,
     NumDays INT DEFAULT 0,
-    BillID INT,
     FOREIGN KEY (RoomID) REFERENCES Room(RoomID) ON DELETE CASCADE,
-    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID) ON DELETE CASCADE,
-    FOREIGN KEY (BillID) REFERENCES Bill(BillID) ON DELETE CASCADE
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID) ON DELETE CASCADE
 );
+
 -- Create Admin table
 CREATE TABLE Admin (
     AdminID INT PRIMARY KEY AUTO_INCREMENT,
@@ -91,15 +99,16 @@ CREATE TABLE Admin (
     DoctorID INT,
     AccessLevel VARCHAR(50),
     Password VARCHAR(255),
-    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID) ON DELETE
-    SET NULL
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID) ON DELETE SET NULL
 );
+
 -- Create Machinery table
 CREATE TABLE Machinery (
     MachineID INT PRIMARY KEY AUTO_INCREMENT,
     Name VARCHAR(50) NOT NULL,
     Cost INT
 );
+
 -- Create Medicines table
 CREATE TABLE Medicines (
     MedicineID INT PRIMARY KEY AUTO_INCREMENT,
@@ -109,6 +118,7 @@ CREATE TABLE Medicines (
     CompanyName VARCHAR(50),
     Amount INT DEFAULT 0
 );
+
 -- Create MedicineRequests table
 CREATE TABLE MedicineRequests (
     RequestID INT PRIMARY KEY AUTO_INCREMENT,
@@ -117,14 +127,19 @@ CREATE TABLE MedicineRequests (
     Cost INT,
     Type VARCHAR(50),
     CompanyName VARCHAR(50),
-    Amount INT DEFAULT 0 -- FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID) ON DELETE SET NULL--
-);
-CREATE TABLE PharmacyRequests(
-    RequestID INT PRIMARY KEY auto_increment,
-    MedicineName VARCHAR(50) NOT NULL,
-    PatientID INT references Patient(PatientID),
     Amount INT DEFAULT 0
+    -- FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID) ON DELETE SET NULL--
 );
+
+CREATE TABLE PharmacyRequests(
+RequestID INT PRIMARY KEY auto_increment,
+MedicineName VARCHAR(50) NOT NULL,
+PatientID INT references Patient(PatientID),
+Amount INT DEFAULT 0
+);
+
+
+
 -- Create Surgery table
 CREATE TABLE Surgery (
     SurgeryID INT PRIMARY KEY AUTO_INCREMENT,
@@ -138,6 +153,7 @@ CREATE TABLE Surgery (
     FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID) ON DELETE CASCADE,
     FOREIGN KEY (BillID) REFERENCES Bill(BillID) ON DELETE CASCADE
 );
+
 -- Create users table
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -147,6 +163,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 -- Create appointments table
 CREATE TABLE appointments (
     appointmentID INT AUTO_INCREMENT PRIMARY KEY,
@@ -158,6 +175,16 @@ CREATE TABLE appointments (
     prescription VARCHAR(500),
     FOREIGN KEY (patientID) REFERENCES Patient(PatientID) ON DELETE CASCADE,
     FOREIGN KEY (doctorID) REFERENCES Doctor(DoctorID) ON DELETE CASCADE,
-    FOREIGN KEY (billID) REFERENCES Bill(BillID) ON DELETE
-    SET NULL
+    FOREIGN KEY (billID) REFERENCES Bill(BillID) ON DELETE SET NULL
+);
+CREATE TABLE MachineHiring (
+    HiringID INT PRIMARY KEY AUTO_INCREMENT,
+    DoctorID INT NOT NULL,
+    MachineID INT NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID) ON DELETE CASCADE,
+    FOREIGN KEY (MachineID) REFERENCES Machinery(MachineID) ON DELETE CASCADE,
+
+    CHECK (EndDate > StartDate)
 );

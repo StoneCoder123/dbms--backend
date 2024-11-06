@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.proj.mideval.MidevalApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.585 s -- in com.proj.mideval.MidevalApplicationTests
