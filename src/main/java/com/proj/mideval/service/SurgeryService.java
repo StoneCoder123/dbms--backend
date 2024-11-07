@@ -1,6 +1,7 @@
 
 package com.proj.mideval.service;
 
+import com.proj.mideval.model.Appointment;
 import com.proj.mideval.model.Surgery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -86,6 +87,14 @@ public class SurgeryService {
         int baseCost = 1000;
         int criticalMultiplier = surgery.getCriticalLevel() * 200;
         return baseCost + criticalMultiplier;
+    }
+
+    public List<Surgery> getUpcomingSurgeriesForDoctorWithBillIdStatus1(int doctorID) {
+        String sql = "SELECT s.* FROM Surgery s " +
+                "JOIN Bill b ON s.billID = b.BillID " +
+                "WHERE s.doctorID = ? AND b.status = 1";
+        return jdbcTemplate.query(sql, new Object[]{doctorID},
+                (rs, rowNum) -> mapRowToSurgery(rs));
     }
 
     // Map a ResultSet row to a Surgery object
