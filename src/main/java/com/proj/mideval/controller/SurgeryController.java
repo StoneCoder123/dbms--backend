@@ -1,6 +1,7 @@
 
 package com.proj.mideval.controller;
 
+import com.proj.mideval.model.Appointment;
 import com.proj.mideval.model.Surgery;
 import com.proj.mideval.model.SurgeryRequest;
 import com.proj.mideval.service.SurgeryService;
@@ -101,6 +102,13 @@ public class SurgeryController {
 
         int rowsAffected = surgeryService.rescheduleSurgery(surgeryID, doctorID, newTime);
         return rowsAffected > 0 ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    // Get upcoming appointments of a doctor with Bill status 1
+    @GetMapping("/doctor/{doctorID}/upcoming/billStatus1")
+    public ResponseEntity<List<Surgery>> getUpcomingAppointmentsForDoctorWithBillIdStatus1(@PathVariable int doctorID) {
+        List<Surgery> surgeries = surgeryService.getUpcomingSurgeriesForDoctorWithBillIdStatus1(doctorID);
+        return ResponseEntity.ok(surgeries);
     }
 
 }
